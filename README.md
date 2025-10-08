@@ -1,4 +1,4 @@
-<h1>Algorithms for Inverse Reinforcement Learning</h1>
+<h1>🌟 Algorithms for Inverse Reinforcement Learning</h1>
 
 ![GitHub contributors](https://img.shields.io/github/contributors/ivomarb/Inverse-Reinforcement-Learning?color=ffcc66&style=for-the-badge)
 ![GitHub stars](https://img.shields.io/github/stars/ivomarb/Inverse-Reinforcement-Learning?color=ffcc66&style=for-the-badge)
@@ -37,12 +37,12 @@ It allows you define any gridworld environment similar to what you find in [[**2
 ![rl](https://user-images.githubusercontent.com/33180566/32406065-176535da-c150-11e7-8a9b-107518775755.jpg)</br >
 [Reinforcement Learning book](#References)
 
-# Gridworld Algorithms Implemented
+# 📖 Gridworld Algorithms Implemented
 
 - Value Iteration [[**1**](#References)]</br >
 - Inverse Reinforcement Learning [[**2**](#References)] </br > 
 
-# Step by Step Guide
+# ✨ Step by Step Guide
 
 Gridworld experiment (Figures 1 and 2 of article)
 Run class TRLMain.java or execute the JAR file: java -jar TRLMain-1.0.0.jar.
@@ -65,13 +65,13 @@ Run class TRLMain.java or execute the JAR file: java -jar TRLMain-1.0.0.jar.
 ![irl8](https://user-images.githubusercontent.com/33180566/32405973-478f4b4e-c14e-11e7-9e6f-8e72dafbbe4f.JPG)</br>
 ![irl7](https://user-images.githubusercontent.com/33180566/32405236-3e895fa2-c140-11e7-9dce-d7e0eae00fe1.PNG)</br >
 
-# References
+# 📚 References
 
 [**1**] [Reinforcement Learning: An Introduction](http://incompleteideas.net/book/the-book-2nd.html), Richard S. Sutton and Andrew G. Barto.</br >
 [**2**] [Algorithms for Inverse Reinforcement Learning](http://ai.stanford.edu/~ang/papers/icml00-irl.pdf). AY Ng, SJ Russell - Icml, 2000 - ai.stanford.edu.
 
 
-# License
+# 🔧 License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
