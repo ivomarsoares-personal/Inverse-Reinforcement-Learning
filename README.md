@@ -71,7 +71,7 @@ Run class TRLMain.java or execute the JAR file: java -jar TRLMain-1.0.0.jar.
 [**2**] [Algorithms for Inverse Reinforcement Learning](http://ai.stanford.edu/~ang/papers/icml00-irl.pdf). AY Ng, SJ Russell - Icml, 2000 - ai.stanford.edu.
 
 
-# 🔧 License
+# 📝 License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
