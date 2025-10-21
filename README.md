@@ -13,16 +13,16 @@
   <summary>Table of Contents</summary>
   <ol>
     <li>
-      <a href="#gridworld-algorithms-implemented">Gridworld Algorithms Implemented</a>
+      <a href="#-gridworld-algorithms-implemented">Gridworld Algorithms Implemented</a>
     </li>
     <li>
-      <a href="#step-by-step-guide">Step by Step Guide</a>
+      <a href="#-step-by-step-guide">Step by Step Guide</a>
     </li>
     <li>
-      <a href="#references">References</a>
+      <a href="#-references">References</a>
     </li>
     <li>
-      <a href="#license">License</a>
+      <a href="#-license">License</a>
     </li>
   </ol>
 </details>
