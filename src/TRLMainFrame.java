@@ -49,13 +49,14 @@ public class TRLMainFrame extends JFrame {
 
 		JMenu lGridMenu = new JMenu("Create");
 		JMenuItem lCreateGridMenuItem = new JMenuItem("1. Grid");
-		JMenuItem lCreateAgentMenuItem = new JMenuItem("2. Agent");
-		JMenuItem lCreateRewardFunctionMenuItem = new JMenuItem("3. Reward Function");
+		JMenuItem lCreateWallMenuItem = new JMenuItem("2. Wall");
+		JMenuItem lCreateAgentMenuItem = new JMenuItem("3. Agent");		
+		JMenuItem lCreateRewardFunctionMenuItem = new JMenuItem("4. Reward Function");
 		lGridMenu.add(lCreateGridMenuItem);
+		lGridMenu.add(lCreateWallMenuItem);
 		lGridMenu.add(lCreateAgentMenuItem);
 		lGridMenu.add(lCreateRewardFunctionMenuItem);
-
-
+		
 		JMenu lRLMenu = new JMenu("Reinforcement Learning");
 		JMenuItem lValueIterationMenuItem = new JMenuItem("1. Value Iteration");
 		JMenuItem lIRLMenuItem            = new JMenuItem("2. Inverse Reinforcement Learning");
@@ -237,6 +238,33 @@ public class TRLMainFrame extends JFrame {
 			}
 		});
 		
+		
+		lCreateWallMenuItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent aActionEvent) {
+				
+				if( fSquareGrid == null ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Create grid first.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				JTextField lInitialVerticeTextField = new JTextField(5);
+				JTextField lFinalVerticeTextField = new JTextField(5);				
+				
+				JPanel lCreateWallPanel = new JPanel();
+				lCreateWallPanel.add(new JLabel("Initial Vertice: "));
+				lCreateWallPanel.add(lInitialVerticeTextField);
+				lCreateWallPanel.add(new JLabel("Final Vertice:"));
+				lCreateWallPanel.add(lFinalVerticeTextField);
+				
+				int lResult = JOptionPane.showConfirmDialog(null, lCreateWallPanel, "Wall information", JOptionPane.OK_CANCEL_OPTION);
+				if (lResult != JOptionPane.OK_OPTION) {
+					return;
+				}
+				
+			}			
+		});
 		
 		
 		
