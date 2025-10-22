@@ -1,8 +1,7 @@
 
 /**
- * 
- * @author Ivomar Brito Soares
- *
+ * Concrete cell implementation for the TRL grid. Extends {@link ARLCell}
+ * and adds a helpful toString and neighbor check used by utilities and tests.
  */
 public class TRLCell extends ARLCell{
 

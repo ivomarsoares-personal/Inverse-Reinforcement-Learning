@@ -3,9 +3,9 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * 
- * @author Ivomar Brito Soares
- *
+ * Concrete policy container used by the TRL implementation.
+ * Holds the list of state/action pairs that represent the chosen action per
+ * state along with auxiliary structures such as value function and Q-values.
  */
 public class TRLPolicy implements IRLPolicy {
 

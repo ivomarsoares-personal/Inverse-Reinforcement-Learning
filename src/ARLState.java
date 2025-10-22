@@ -2,9 +2,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 
- * @author Ivomar Brito Soares
- *
+ * Abstract base implementation of {@link IRLState} shared by concrete state
+ * classes. Provides common storage for the backing {@link IRLCell}, the list
+ * of available {@link IRLAction}s, and convenience getters/setters for
+ * initial/absorbing flags.
  */
 public abstract class ARLState implements IRLState{
 	

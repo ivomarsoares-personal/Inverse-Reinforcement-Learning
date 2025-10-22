@@ -11,9 +11,9 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 
 /**
- * 
- * @author Ivomar Brito Soares
- *
+ * Swing panel that plots a recovered reward function using JFreeChart.
+ * The panel expects an array of rewards and simple chart configuration
+ * (Rmax and regularization) and will render a bar chart when requested.
  */
 public class TRLIRLRewardPanel extends JPanel {
 

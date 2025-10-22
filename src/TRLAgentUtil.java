@@ -1,9 +1,13 @@
 import org.apache.commons.math3.linear.RealMatrix;
 
 /**
- * 
- * @author Ivomar Brito Soares
+ * Helper / factory utilities for creating and wiring up {@link IRLAgent}
+ * instances in the concrete TRL implementation.
  *
+ * Responsibilities:
+ * - Construct agent state/action structures for a given grid.
+ * - Create and install transition probability matrices for each primitive action
+ *   using the concrete TRL transition probability builders.
  */
 public class TRLAgentUtil {
 

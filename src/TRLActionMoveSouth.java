@@ -1,7 +1,5 @@
 /**
- * 
- * @author Ivomar Brito Soares
- *
+ * Concrete action that represents moving the agent one cell to the south.
  */
 public class TRLActionMoveSouth extends ARLAction {
 

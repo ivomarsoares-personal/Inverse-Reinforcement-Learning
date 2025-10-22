@@ -1,7 +1,7 @@
 /**
- * 
- * @author Ivomar Brito Soares
- *
+ * Concrete transition-probability builder for the "move north" primitive
+ * action used by the TRL agent. Implements direction-specific checks used by
+ * {@link ARLTransitionProbabilities}.
  */
 public class TRLTransitionProbabilitiesActionMoveNorth extends ARLTransitionProbabilities {
 

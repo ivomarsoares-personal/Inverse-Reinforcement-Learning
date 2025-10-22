@@ -18,9 +18,9 @@ import javax.swing.JPanel;
 
 
 /**
- * 
- * @author Ivomar Brito Soares
- *
+ * Swing component responsible for rendering the grid, policy arrows, Q-values
+ * and the initial/absorbing states. It observes the grid/agent model and
+ * repaints itself when notified.
  */
 public class TRLGridPanel extends JPanel implements Observer {
 

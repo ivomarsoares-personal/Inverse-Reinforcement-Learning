@@ -4,9 +4,10 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
 /**
- * 
- * @author Ivomar Brito Soares
- *
+ * Abstract helper that constructs a transition probability matrix for a
+ * particular primitive action. Concrete subclasses implement the direction-
+ * specific predicates; the shared method {@link #createTransitionProbabilitiesForAction}
+ * implements the common probabilistic model (correct action vs noise).
  */
 public abstract class ARLTransitionProbabilities implements IRLTransitionProbability {
 	

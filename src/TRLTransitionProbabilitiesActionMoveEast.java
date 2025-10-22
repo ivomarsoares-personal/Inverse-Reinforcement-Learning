@@ -1,7 +1,7 @@
 /**
- * 
- * @author Ivomar Brito Soares
- *
+ * Concrete transition-probability builder for the "move east" primitive
+ * action. Implements the direction-specific checks used by the generic
+ * {@link ARLTransitionProbabilities#createTransitionProbabilitiesForAction} code.
  */
 public class TRLTransitionProbabilitiesActionMoveEast extends ARLTransitionProbabilities {
 	

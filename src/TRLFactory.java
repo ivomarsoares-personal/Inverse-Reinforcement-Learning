@@ -1,8 +1,8 @@
 
 /**
- * 
- * @author Ivomar Brito Soares
- *
+ * Simple object factory for the TRL concrete classes.
+ * This class centralizes construction of grid, cell, wall, agent, policy and
+ * reward objects used across utilities and UI components.
  */
 public class TRLFactory {
 

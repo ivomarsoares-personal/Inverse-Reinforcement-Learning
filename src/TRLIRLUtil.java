@@ -18,9 +18,10 @@ import org.apache.commons.math3.optim.linear.SimplexSolver;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 
 /**
- * 
- * @author Ivomar Brito Soares
- *
+ * Utilities for solving the Inverse Reinforcement Learning (IRL) problem
+ * for the TRL agent and grid instances. Contains code that sets up and
+ * solves the linear programming problem (Ng & Russell style) using Apache
+ * Commons Math linear and optimization utilities.
  */
 public class TRLIRLUtil {
 

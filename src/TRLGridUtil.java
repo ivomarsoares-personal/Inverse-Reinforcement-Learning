@@ -1,9 +1,9 @@
 import java.util.List;
 
 /**
- * 
- * @author Ivomar Brito Soares
- *
+ * Utility class for constructing and querying TRL grid layouts. Provides
+ * methods to create square grids, retrieve cells by (row,column) or index and
+ * to wire up cell neighbors and border walls.
  */
 public class TRLGridUtil {
 	

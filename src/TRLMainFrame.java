@@ -17,9 +17,9 @@ import javax.swing.JTextField;
 
 
 /**
- * 
- * @author Ivomar Brito Soares
- *
+ * Main Swing frame that composes the GridWorld UI. Provides menus to create
+ * the grid/agent/reward, run value iteration and IRL, and to display results
+ * using the embedded panels.
  */
 public class TRLMainFrame extends JFrame {
 

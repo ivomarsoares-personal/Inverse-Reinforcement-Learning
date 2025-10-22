@@ -9,9 +9,9 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
 /**
- * 
- * @author Ivomar Brito Soares
- *
+ * Policy-related utilities: contains implementations for value iteration,
+ * policy extraction from value functions, and solving Bellman equations for
+ * state and action value functions.
  */
 public class TRLPolicyUtil {
 

@@ -1,8 +1,8 @@
 
 /**
- * 
- * @author Ivomar Brito Soares
- *
+ * Simple data holder pairing an initial {@link IRLState} with the
+ * {@link IRLAction} that the policy prescribes for that state as well as
+ * the state's value. Used by {@link TRLPolicy} to store computed policies.
  */
 public class TRLStateActionPair {
 

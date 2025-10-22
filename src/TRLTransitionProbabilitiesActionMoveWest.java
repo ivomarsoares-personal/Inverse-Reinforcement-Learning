@@ -1,8 +1,8 @@
 
 /**
- * 
- * @author Ivomar Brito Soares
- *
+ * Concrete transition-probability builder for the "move west" primitive
+ * action. Implements predicate methods consulted by the generic
+ * {@link ARLTransitionProbabilities#createTransitionProbabilitiesForAction}.
  */
 public class TRLTransitionProbabilitiesActionMoveWest extends ARLTransitionProbabilities {
 

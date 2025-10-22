@@ -1,8 +1,8 @@
 
 /**
- * 
- * @author Ivomar Brito Soares
- *
+ * Concrete transition-probability builder for the "move south" primitive
+ * action. Provides direction-specific predicates required by the shared
+ * transition-probability assembly logic in {@link ARLTransitionProbabilities}.
  */
 public class TRLTransitionProbabilitiesActionMoveSouth extends ARLTransitionProbabilities {
 

@@ -2,9 +2,8 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * 
- * @author Ivomar Brito Soares
- *
+ * Utilities to create reward functions for TRL agents. Provides helpers to
+ * build per-state reward mappings used by policy evaluation and IRL routines.
  */
 public class TRLRewardFunctionUtil {
 
