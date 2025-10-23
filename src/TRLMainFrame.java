@@ -33,6 +33,8 @@ public class TRLMainFrame extends JFrame {
 	private IRLAgent          fAgent;
 	private TRLIRLRewardPanel fIRLRewardPanel;
 	private JTabbedPane       fTabbedPane;
+	private int fNumberOfRows = 5;
+	private int fNumberOfColumns = 5;
 
 	public TRLMainFrame( ){
 
@@ -95,7 +97,6 @@ public class TRLMainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent aActionEvent) {
 
-				int lNumberOfRows = 5;
 
 				fSquareGrid = null;
 				fGridPanel.setGrid(null);
@@ -111,17 +112,18 @@ public class TRLMainFrame extends JFrame {
 						JOptionPane.QUESTION_MESSAGE,
 						null,
 						null,
-						lNumberOfRows + "");
+						fNumberOfRows + "");
 
 				try{
-					lNumberOfRows = Integer.parseInt(lNumberOfRowsColumnsAsString);
+					fNumberOfRows = Integer.parseInt(lNumberOfRowsColumnsAsString);
+					fNumberOfColumns = fNumberOfRows;
 				}
 				catch( NumberFormatException aNumberFormatException ) {
 					JOptionPane.showMessageDialog(TRLMainFrame.this, "Not a number.", "Error" ,JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 
-				fSquareGrid = TRLGridUtil.getSharedInstance().createSquareGrid(lNumberOfRows);
+				fSquareGrid = TRLGridUtil.getSharedInstance().createSquareGrid(fNumberOfRows);
 				fGridPanel.setGrid(fSquareGrid);
 				((ARLGrid)fSquareGrid).addObserver(fGridPanel);
 				fGridPanel.repaint();
@@ -263,6 +265,42 @@ public class TRLMainFrame extends JFrame {
 					return;
 				}
 				
+				int lInitialVerticeXCoordinate = TRLWallUtil.getSharedInstance().getVerticeXCoordinate( lInitialVerticeTextField.getText() );
+				int lInitialVerticeYCoordinate = TRLWallUtil.getSharedInstance().getVerticeYCoordinate( lInitialVerticeTextField.getText() );
+				int lFinalVerticeXCoordinate   = TRLWallUtil.getSharedInstance().getVerticeXCoordinate( lFinalVerticeTextField.getText() );
+				int lFinalVerticeYCoordinate   = TRLWallUtil.getSharedInstance().getVerticeYCoordinate( lFinalVerticeTextField.getText() );
+				
+				if( lInitialVerticeXCoordinate != lFinalVerticeXCoordinate && lInitialVerticeYCoordinate != lFinalVerticeYCoordinate ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Only horizontal and vertical walls are allowed.", "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if( lInitialVerticeXCoordinate < 0 || lFinalVerticeXCoordinate < 0 || lInitialVerticeYCoordinate < 0 || lFinalVerticeYCoordinate < 0) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Vertices coordinates cannot be smaller than 0.", "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if( TRLWallUtil.getSharedInstance().isHorizontalWall(lInitialVerticeXCoordinate, lFinalVerticeXCoordinate) && lFinalVerticeXCoordinate > fNumberOfColumns ) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "For horizontal walls, the final vertice X coordinate " + lFinalVerticeXCoordinate + " cannot be greater than the number of columns of the grid " + fNumberOfColumns + "." , "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if( TRLWallUtil.getSharedInstance().isVerticalWall(lInitialVerticeYCoordinate, lFinalVerticeYCoordinate) && lFinalVerticeXCoordinate > fNumberOfRows ) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "For vertical walls, the final vertice X coordinate " + lFinalVerticeXCoordinate + " cannot be greater than the number of rows of the grid " + fNumberOfRows + "." , "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+
+				if( TRLWallUtil.getSharedInstance().isHorizontalWall(lInitialVerticeXCoordinate, lFinalVerticeXCoordinate) && lFinalVerticeYCoordinate > fNumberOfColumns ) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "For horizontal walls, the final vertice Y coordinate " + lFinalVerticeYCoordinate + " cannot be greater than the number of columns of the grid " + fNumberOfRows + "." , "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+
+				if( TRLWallUtil.getSharedInstance().isVerticalWall(lInitialVerticeYCoordinate, lFinalVerticeYCoordinate) && lFinalVerticeYCoordinate > fNumberOfRows ) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "For vertical walls, the final vertice Y coordinate " + lFinalVerticeYCoordinate + " cannot be greater than the number of rows of the grid " + fNumberOfRows + "." , "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}			
+				
+				TRLWallUtil.getSharedInstance().createWall(lInitialVerticeTextField.getText(), lFinalVerticeTextField.getText());
 			}			
 		});
 		

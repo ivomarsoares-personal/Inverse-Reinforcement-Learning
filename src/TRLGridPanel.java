@@ -37,7 +37,7 @@ public class TRLGridPanel extends JPanel implements Observer {
 	
 	private final static Color sGRID_COLOR = Color.black;
 	private final static Color sCELL_ID_COLOR = Color.black;
-	private final static BasicStroke sWALL_STROKE =  new BasicStroke(2);
+	private final static BasicStroke sWALL_STROKE =  new BasicStroke(4);
 	
 	private final static Color sPOLICY_ACTION_ARROW_COLOR =  Color.BLUE;
 	private final static BasicStroke sPOLICY_ACTION_ARROW_STROKE =  new BasicStroke(3);

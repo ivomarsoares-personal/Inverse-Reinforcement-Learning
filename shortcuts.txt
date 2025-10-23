@@ -1,0 +1,3 @@
+Eclipse:
+
+Ctrl + /:  Comment a line
