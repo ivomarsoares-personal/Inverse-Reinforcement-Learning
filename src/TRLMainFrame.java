@@ -282,23 +282,13 @@ public class TRLMainFrame extends JFrame {
 					return;
 				}
 				
-				if( TRLWallUtil.getSharedInstance().isHorizontalWall(lInitialVerticeXCoordinate, lFinalVerticeXCoordinate) && lFinalVerticeXCoordinate > fNumberOfColumns ) {
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "For horizontal walls, the final vertice X coordinate " + lFinalVerticeXCoordinate + " cannot be greater than the number of columns of the grid " + fNumberOfColumns + "." , "Error", JOptionPane.ERROR_MESSAGE);
+				if( lFinalVerticeXCoordinate > fNumberOfColumns ) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "The final vertice X coordinate " + lFinalVerticeXCoordinate + " cannot be greater than the number of columns of the grid " + fNumberOfColumns + "." , "Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				
-				if( TRLWallUtil.getSharedInstance().isVerticalWall(lInitialVerticeYCoordinate, lFinalVerticeYCoordinate) && lFinalVerticeXCoordinate > fNumberOfRows ) {
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "For vertical walls, the final vertice X coordinate " + lFinalVerticeXCoordinate + " cannot be greater than the number of rows of the grid " + fNumberOfRows + "." , "Error", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-
-				if( TRLWallUtil.getSharedInstance().isHorizontalWall(lInitialVerticeXCoordinate, lFinalVerticeXCoordinate) && lFinalVerticeYCoordinate > fNumberOfColumns ) {
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "For horizontal walls, the final vertice Y coordinate " + lFinalVerticeYCoordinate + " cannot be greater than the number of columns of the grid " + fNumberOfRows + "." , "Error", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-
-				if( TRLWallUtil.getSharedInstance().isVerticalWall(lInitialVerticeYCoordinate, lFinalVerticeYCoordinate) && lFinalVerticeYCoordinate > fNumberOfRows ) {
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "For vertical walls, the final vertice Y coordinate " + lFinalVerticeYCoordinate + " cannot be greater than the number of rows of the grid " + fNumberOfRows + "." , "Error", JOptionPane.ERROR_MESSAGE);
+				if( lFinalVerticeYCoordinate > fNumberOfRows ) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "The final vertice Y coordinate " + lFinalVerticeYCoordinate + " cannot be greater than the number of rows of the grid " + fNumberOfRows + "." , "Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}			
 				
