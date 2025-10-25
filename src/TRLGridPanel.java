@@ -49,6 +49,7 @@ public class TRLGridPanel extends JPanel implements Observer {
 	private int fGridYInPixels;
 	private double fCellWidthInPixels;
 	private double fCellHeightInPixels;
+	private int fGridLengthInPixels;
 
 
 	@Override
@@ -67,6 +68,7 @@ public class TRLGridPanel extends JPanel implements Observer {
 		this.setBackground(Color.WHITE);
 
 		drawGrid(this, aGraphics);
+		drawWalls(this, aGraphics);
 		drawCellId(this, aGraphics);
 		drawInitialStateAndGoalState( this, aGraphics);
 		drawPolicyActionArrowAndStateValue(this, aGraphics);
@@ -81,47 +83,74 @@ public class TRLGridPanel extends JPanel implements Observer {
 		int lCanvasWidth = aCanvas.getWidth();
 		int lCanvasHeight = aCanvas.getHeight();
 
-		int lGridLenghInPixels = lCanvasWidth;
+		fGridLengthInPixels = lCanvasWidth;
 		boolean lCanvasHeightIsSmaller = false;
 		if( lCanvasHeight < lCanvasWidth ){
-			lGridLenghInPixels = lCanvasHeight;
+			fGridLengthInPixels = lCanvasHeight;
 			lCanvasHeightIsSmaller = true;
 		}
 
-		lGridLenghInPixels -= 2 * sGRID_MARGIN;
+		fGridLengthInPixels -= 2 * sGRID_MARGIN;
 
 
 		if( lCanvasHeightIsSmaller ) {
-			fGridXInPixels =  (int) (( lCanvasWidth - lGridLenghInPixels ) / 2.0);
+			fGridXInPixels =  (int) (( lCanvasWidth - fGridLengthInPixels ) / 2.0);
 			fGridYInPixels = sGRID_MARGIN;
 		}
 		else {
 			fGridXInPixels =  sGRID_MARGIN;
-			fGridYInPixels = (int) (( lCanvasHeight - lGridLenghInPixels ) / 2.0);
+			fGridYInPixels = (int) (( lCanvasHeight - fGridLengthInPixels ) / 2.0);
 		}
 
-		// Drawing bounding squre.
-		lGraphics2D.setStroke(sWALL_STROKE);
-		lGraphics2D.drawRect( fGridXInPixels, fGridYInPixels, lGridLenghInPixels, lGridLenghInPixels);
+
 
 		// Drawing cells lines.
 		lGraphics2D.setStroke(new BasicStroke(1));
 		int lNumberOfRows    = getGrid().getNumberOfRows();
 		int lNumberOfColumns = getGrid().getNumberOfColumns();
 
-		fCellHeightInPixels = (lGridLenghInPixels / (double) lNumberOfRows );
-		fCellWidthInPixels  = (lGridLenghInPixels / (double) lNumberOfColumns );
+		fCellHeightInPixels = (fGridLengthInPixels / (double) lNumberOfRows );
+		fCellWidthInPixels  = (fGridLengthInPixels / (double) lNumberOfColumns );
 
 		double lYInPixels = fGridYInPixels + fCellHeightInPixels; 
 		for( int lRowIndex = 0; lRowIndex < lNumberOfRows - 1; lRowIndex++ ){
-			lGraphics2D.drawLine(fGridXInPixels, (int) lYInPixels, fGridXInPixels+lGridLenghInPixels, (int)lYInPixels);
+			lGraphics2D.drawLine(fGridXInPixels, (int) lYInPixels, fGridXInPixels+fGridLengthInPixels, (int)lYInPixels);
 			lYInPixels += fCellHeightInPixels;
 		}
 
 		double lXInPixels = fGridXInPixels + fCellWidthInPixels;
 		for( int lColumnIndex = 0; lColumnIndex < lNumberOfColumns - 1; lColumnIndex++ ){
-			lGraphics2D.drawLine((int)lXInPixels, fGridYInPixels, (int)lXInPixels, fGridYInPixels + lGridLenghInPixels);
+			lGraphics2D.drawLine((int)lXInPixels, fGridYInPixels, (int)lXInPixels, fGridYInPixels + fGridLengthInPixels);
 			lXInPixels += fCellWidthInPixels;
+		}
+	}
+	
+	public void drawWalls( final Component aCanvas, final Graphics aGraphics ){
+		
+		Graphics2D lGraphics2D = (Graphics2D)aGraphics;
+		
+		// Drawing walls.
+		List<IRLWall> lWallList = fGrid.getWallList();
+		for(int lWallIndex = 0; lWallIndex < lWallList.size(); lWallIndex++) {
+			IRLWall lWall = lWallList.get(lWallIndex);
+			int lInitialVerticeXCoordinate = lWall.getInitialVerticeXCoordinate();
+			int lInitialVerticeYCoordinate = lWall.getInitialVerticeYCoordinate();
+			int lFinalVerticeXCoordinate   = lWall.getFinalVerticeXCoordinate();
+			int lFinalVerticeYCoordinate   = lWall.getFinalVerticeYCoordinate();
+
+			// Map the wall vertex coordinates (in grid units) to pixel coordinates.
+			// The top-left corner of the grid in pixels is (fGridXInPixels, fGridYInPixels).
+			// Assume the wall vertex coordinates refer to grid lines between cells, so
+			// multiply by the cell width/height to get offsets.
+			double x1 = fGridXInPixels + lInitialVerticeXCoordinate * fCellWidthInPixels;
+			double y1 = fGridYInPixels + lInitialVerticeYCoordinate * fCellHeightInPixels;
+			double x2 = fGridXInPixels + lFinalVerticeXCoordinate * fCellWidthInPixels;
+			double y2 = fGridYInPixels + lFinalVerticeYCoordinate * fCellHeightInPixels;
+
+			// Draw wall line (walls are horizontal or vertical).
+			lGraphics2D.setColor(sGRID_COLOR);
+			lGraphics2D.setStroke(sWALL_STROKE);
+			lGraphics2D.drawLine((int)Math.round(x1), (int)Math.round(y1), (int)Math.round(x2), (int)Math.round(y2));
 		}
 	}
 

@@ -6,34 +6,35 @@
  */
 public abstract class ARLWall implements IRLWall{
 
+	protected int fId;
 	private int fInitialVerticeXCoordinate;
 	private int fInitialVerticeYCoordinate;
 	private int fFinalVerticeXCoordinate;
 	private int fFinalVerticeYCoordinate;
 	
 	
-	public int getfInitialVerticeXCoordinate() {
+	public int getInitialVerticeXCoordinate() {
 		return fInitialVerticeXCoordinate;
 	}
-	public void setfInitialVerticeXCoordinate(int fInitialVerticeXCoordinate) {
+	public void setInitialVerticeXCoordinate(int fInitialVerticeXCoordinate) {
 		this.fInitialVerticeXCoordinate = fInitialVerticeXCoordinate;
 	}
-	public int getfInitialVerticeYCoordinate() {
+	public int getInitialVerticeYCoordinate() {
 		return fInitialVerticeYCoordinate;
 	}
-	public void setfInitialVerticeYCoordinate(int fInitialVerticeYCoordinate) {
+	public void setInitialVerticeYCoordinate(int fInitialVerticeYCoordinate) {
 		this.fInitialVerticeYCoordinate = fInitialVerticeYCoordinate;
 	}
-	public int getfFinalVerticeXCoordinate() {
+	public int getFinalVerticeXCoordinate() {
 		return fFinalVerticeXCoordinate;
 	}
-	public void setfFinalVerticeXCoordinate(int fFinalVerticeXCoordinate) {
+	public void setFinalVerticeXCoordinate(int fFinalVerticeXCoordinate) {
 		this.fFinalVerticeXCoordinate = fFinalVerticeXCoordinate;
 	}
-	public int getfFinalVerticeYCoordinate() {
+	public int getFinalVerticeYCoordinate() {
 		return fFinalVerticeYCoordinate;
 	}
-	public void setfFinalVerticeYCoordinate(int fFinalVerticeYCoordinate) {
+	public void setFinalVerticeYCoordinate(int fFinalVerticeYCoordinate) {
 		this.fFinalVerticeYCoordinate = fFinalVerticeYCoordinate;
 	}
 		

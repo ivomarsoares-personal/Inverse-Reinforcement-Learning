@@ -29,7 +29,7 @@ public class TRLMainFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	private TRLGridPanel      fGridPanel;
-	private IRLGrid           fSquareGrid;
+	private IRLGrid           fGrid;
 	private IRLAgent          fAgent;
 	private TRLIRLRewardPanel fIRLRewardPanel;
 	private JTabbedPane       fTabbedPane;
@@ -56,6 +56,8 @@ public class TRLMainFrame extends JFrame {
 		JMenuItem lCreateRewardFunctionMenuItem = new JMenuItem("4. Reward Function");
 		lGridMenu.add(lCreateGridMenuItem);
 		lGridMenu.add(lCreateWallMenuItem);
+		// Disable wall creation from the menu (not available in this UI)
+		lCreateWallMenuItem.setEnabled(false);
 		lGridMenu.add(lCreateAgentMenuItem);
 		lGridMenu.add(lCreateRewardFunctionMenuItem);
 		
@@ -84,10 +86,10 @@ public class TRLMainFrame extends JFrame {
 		add(lMenuBar, BorderLayout.NORTH);
 		add( fTabbedPane, BorderLayout.CENTER);
 
-		fSquareGrid = TRLGridUtil.getSharedInstance().createSquareGrid(5);
+		fGrid = TRLGridUtil.getSharedInstance().createSquareGrid(5);
 
-		fGridPanel.setGrid(fSquareGrid);
-		((ARLGrid)fSquareGrid).addObserver(fGridPanel);
+		fGridPanel.setGrid(fGrid);
+		((ARLGrid)fGrid).addObserver(fGridPanel);
 
 		//make sure the JFrame is visible
 		setVisible(true);
@@ -98,7 +100,7 @@ public class TRLMainFrame extends JFrame {
 			public void actionPerformed(ActionEvent aActionEvent) {
 
 
-				fSquareGrid = null;
+				fGrid = null;
 				fGridPanel.setGrid(null);
 				fGridPanel.setAgent(null);
 				fTabbedPane.removeAll();
@@ -123,9 +125,9 @@ public class TRLMainFrame extends JFrame {
 					return;
 				}
 
-				fSquareGrid = TRLGridUtil.getSharedInstance().createSquareGrid(fNumberOfRows);
-				fGridPanel.setGrid(fSquareGrid);
-				((ARLGrid)fSquareGrid).addObserver(fGridPanel);
+				fGrid = TRLGridUtil.getSharedInstance().createSquareGrid(fNumberOfRows);
+				fGridPanel.setGrid(fGrid);
+				((ARLGrid)fGrid).addObserver(fGridPanel);
 				fGridPanel.repaint();
 
 			}
@@ -139,12 +141,12 @@ public class TRLMainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent aActionEvent) {
 				
-				if( fSquareGrid == null ){
+				if( fGrid == null ){
 					JOptionPane.showMessageDialog(TRLMainFrame.this, "Create grid first.", "Error" ,JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				
-				int lNumberOfRows = fSquareGrid.getNumberOfRows();
+				int lNumberOfRows = fGrid.getNumberOfRows();
 
 				JTextField lInitialStateTextField             = new JTextField(5); 
 				lInitialStateTextField.setText( (lNumberOfRows * (lNumberOfRows - 1))+"");
@@ -194,7 +196,7 @@ public class TRLMainFrame extends JFrame {
 				}
 			
 				
-				int lNumberOfStates = fSquareGrid.getCellList().size();
+				int lNumberOfStates = fGrid.getCellList().size();
 				if( lInitialStateIndex < 0 || lInitialStateIndex >= lNumberOfStates ){
 					JOptionPane.showMessageDialog(TRLMainFrame.this, "Initial State Index must be greater or equal than 0 and lower than " +  lNumberOfStates + ".", "Error" ,JOptionPane.ERROR_MESSAGE);
 					return;
@@ -227,7 +229,7 @@ public class TRLMainFrame extends JFrame {
 				
 
 				fAgent = TRLAgentUtil.getSharedInstance().createAgent(
-						fSquareGrid, 
+						fGrid, 
 						lInitialStateIndex, 
 						lFinalStateIndex,
 						lCorrectActionProbability,
@@ -246,7 +248,7 @@ public class TRLMainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent aActionEvent) {
 				
-				if( fSquareGrid == null ){
+				if( fGrid == null ){
 					JOptionPane.showMessageDialog(TRLMainFrame.this, "Create grid first.", "Error" ,JOptionPane.ERROR_MESSAGE);
 					return;
 				}
@@ -300,7 +302,8 @@ public class TRLMainFrame extends JFrame {
 					return;
 				}			
 				
-				TRLWallUtil.getSharedInstance().createWall(lInitialVerticeTextField.getText(), lFinalVerticeTextField.getText());
+				TRLWallUtil.getSharedInstance().createWall(fGrid, lInitialVerticeTextField.getText(), lFinalVerticeTextField.getText());
+				fGridPanel.repaint();
 			}			
 		});
 		

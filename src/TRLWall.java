@@ -6,4 +6,11 @@
  */
 public class TRLWall extends ARLWall {
 
+	public static int COUNT = 0;
+	
+	public void TRWall() {
+		fId = COUNT;
+		COUNT++;		
+	}
+	
 }

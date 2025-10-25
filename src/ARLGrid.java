@@ -14,6 +14,7 @@ public abstract class ARLGrid extends Observable implements IRLGrid {
 	private int fNumberOfRows;
 	private int fNumberOfColumns;	
 	private List<IRLCell> fCellList = new ArrayList<IRLCell>();
+	private List<IRLWall> fWallList = new ArrayList<IRLWall>();
 	
 	private IRLRewardFunction fRewardFunction;
 
@@ -81,6 +82,10 @@ public abstract class ARLGrid extends Observable implements IRLGrid {
 
 	public List<IRLCell> getCellList() {
 		return fCellList;
+	}
+	
+	public List<IRLWall> getWallList() {
+		return fWallList;
 	}
 	
 	public IRLRewardFunction getRewardFunction() {

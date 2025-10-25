@@ -7,28 +7,29 @@ public class TRLWallUtil {
 	}	
 	private TRLWallUtil(){}
 
-	public IRLWall createWall( final String aInitialVertice, final String aFinalVertice){
+	public IRLWall createWall( final IRLGrid aGrid, final String aInitialVertice, final String aFinalVertice){
 		
 		int lInitialVerticeXCoordinate = getVerticeXCoordinate( aInitialVertice );
 		int lInitialVerticeYCoordinate = getVerticeYCoordinate( aInitialVertice );
 		int lFinalVerticeXCoordinate   = getVerticeXCoordinate( aFinalVertice );
 		int lFinalVerticeYCoordinate   = getVerticeYCoordinate( aFinalVertice );
 	
+		IRLWall lWall = (IRLWall) TRLFactory.createRLObject(IRLGridComponent.sWALL);
+		lWall.setInitialVerticeXCoordinate(lInitialVerticeXCoordinate);
+		lWall.setInitialVerticeYCoordinate(lInitialVerticeYCoordinate);
+		lWall.setFinalVerticeXCoordinate(lFinalVerticeXCoordinate);
+		lWall.setFinalVerticeYCoordinate(lFinalVerticeYCoordinate);
+		aGrid.getWallList().add(lWall);
 	
-		System.out.println( "Creating wall between (" + lInitialVerticeXCoordinate + "," + lInitialVerticeYCoordinate + ") and (" + lFinalVerticeXCoordinate + "," + lFinalVerticeYCoordinate + ")" );
-		//		IRLWall lWall = (IRLWall) TRLFactory.createRLObject(IRLObject.sWALL);
-		
-		return null;
+		return lWall;
 	}
 	
-	public int getVerticeXCoordinate( final String aVertice ){
-		
+	public int getVerticeXCoordinate( final String aVertice ){		
 		String[] lComponents = aVertice.split(",");
 		return Integer.parseInt( lComponents[0] );
 	}
 	
-	public int getVerticeYCoordinate( final String aVertice ){
-		
+	public int getVerticeYCoordinate( final String aVertice ){		
 		String[] lComponents = aVertice.split(",");
 		return Integer.parseInt( lComponents[1] );
 	}
