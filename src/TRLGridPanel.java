@@ -219,10 +219,10 @@ public class TRLGridPanel extends JPanel implements Observer {
 		}
 	}
 	
-	private void drawVerticesCoordinates(  final Component aCanvas, final Graphics aGraphics ){ 		
+	private void drawVerticesCoordinates(  final Component aCanvas, final Graphics aGraphics ){ 
 		if( !fDisplayVerticesCoordinates ){
 			return;
-		}		
+		}
 		
 		Graphics2D lGraphics2D = (Graphics2D)aGraphics;
 		lGraphics2D.setColor(sCELL_ID_COLOR);
@@ -247,12 +247,22 @@ public class TRLGridPanel extends JPanel implements Observer {
 				Rectangle2D lBounds = lFontMetrics.getStringBounds(lCoord, lGraphics2D);
 				double textWidth = lBounds.getWidth();
 				int ascent = lFontMetrics.getAscent();
+				int descent = lFontMetrics.getDescent();
 
-				// Place the text so its right edge is 2px left of the vertex
-				// and its top is 2px below the vertex. Because drawString uses
-				// (x,y) with y as baseline, baseline = top + ascent.
+				// Place the text so its right edge is 2px left of the vertex.
 				int drawX = (int) Math.round(xPixel - 2.0 - textWidth);
-				int drawY = (int) Math.round(yPixel + 2.0 + ascent);
+
+				// Default: draw text below the vertex (top = vertexY + 2)
+				int drawY;
+				if (vy == lNumberOfRows) {
+					// Bottom-most grid line: show the coordinates above the line.
+					// We want the bottom of the text to be 2px above the vertex, so
+					// baseline = (vertexY - 2) - descent
+					drawY = (int) Math.round(yPixel - 2.0 - descent);
+				} else {
+					// Other vertices: show coordinates 2px below the vertex.
+					drawY = (int) Math.round(yPixel + 2.0 + ascent);
+				}
 
 				// Safety clamp so text stays inside the canvas
 				if (drawX < 0) drawX = 0;
