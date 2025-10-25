@@ -43,6 +43,7 @@ public class TRLGridPanel extends JPanel implements Observer {
 	private final static BasicStroke sPOLICY_ACTION_ARROW_STROKE =  new BasicStroke(3);
 	
 	private final static Font sCELL_ID_FONT     = new Font ("Monospaced", Font.BOLD, 16);
+	private final static Font sVERTICES_COORDINATES_FONT     = new Font ("Monospaced", Font.PLAIN, 12);
 
 
 	private int fGridXInPixels;
@@ -53,6 +54,7 @@ public class TRLGridPanel extends JPanel implements Observer {
 
 	
 	private boolean fDisplayCellIds;
+	private boolean fDisplayVerticesCoordinates;
 	private boolean fDisplayPolicyActionArrows;
 	private boolean fDisplayPolicyStateValues;
 	private boolean fDisplayQValues;
@@ -76,6 +78,7 @@ public class TRLGridPanel extends JPanel implements Observer {
 		drawGrid(this, aGraphics);
 		drawWalls(this, aGraphics);
 		drawCellId(this, aGraphics);
+		drawVerticesCoordinates(this, aGraphics);
 		drawInitialStateAndGoalState( this, aGraphics);
 		drawPolicyActionArrowAndStateValue(this, aGraphics);
 		drawQValues( this, aGraphics );
@@ -213,6 +216,60 @@ public class TRLGridPanel extends JPanel implements Observer {
 					(int) (fCellHeightInPixels), 
 					aGraphics);
 
+		}
+	}
+	
+	private void drawVerticesCoordinates(  final Component aCanvas, final Graphics aGraphics ){ 
+		if( !fDisplayVerticesCoordinates ){
+			return;
+		}
+		
+		Graphics2D lGraphics2D = (Graphics2D)aGraphics;
+		lGraphics2D.setColor(sCELL_ID_COLOR);
+		lGraphics2D.setFont (sVERTICES_COORDINATES_FONT);
+		FontMetrics lFontMetrics = aGraphics.getFontMetrics();
+
+		// The vertices are the intersections of the grid lines. There are
+		// (columns + 1) vertices along X and (rows + 1) along Y. The top-left
+		// vertex is (0,0). Coordinates increase to the right (x) and down (y).
+		int lNumberOfRows    = getGrid().getNumberOfRows();
+		int lNumberOfColumns = getGrid().getNumberOfColumns();
+
+		for (int vy = 0; vy <= lNumberOfRows; vy++) {
+			for (int vx = 0; vx <= lNumberOfColumns; vx++) {
+				String lCoord = "(" + vx + "," + vy + ")";
+
+				// Pixel position of the vertex
+				double xPixel = fGridXInPixels + vx * fCellWidthInPixels;
+				double yPixel = fGridYInPixels + vy * fCellHeightInPixels;
+
+				// Measure text size
+				Rectangle2D lBounds = lFontMetrics.getStringBounds(lCoord, lGraphics2D);
+				double textWidth = lBounds.getWidth();
+				int ascent = lFontMetrics.getAscent();
+				int descent = lFontMetrics.getDescent();
+
+				// Place the text so its right edge is 2px left of the vertex.
+				int drawX = (int) Math.round(xPixel - 2.0 - textWidth);
+
+				// Default: draw text below the vertex (top = vertexY + 2)
+				int drawY;
+				if (vy == lNumberOfRows) {
+					// Bottom-most grid line: show the coordinates above the line.
+					// We want the bottom of the text to be 2px above the vertex, so
+					// baseline = (vertexY - 2) - descent
+					drawY = (int) Math.round(yPixel - 2.0 - descent);
+				} else {
+					// Other vertices: show coordinates 2px below the vertex.
+					drawY = (int) Math.round(yPixel + 2.0 + ascent);
+				}
+
+				// Safety clamp so text stays inside the canvas
+				if (drawX < 0) drawX = 0;
+				if (drawY < ascent) drawY = ascent;
+
+				lGraphics2D.drawString(lCoord, drawX, drawY);
+			}
 		}
 	}
 	
@@ -411,6 +468,14 @@ public class TRLGridPanel extends JPanel implements Observer {
 
 	public void setDisplayCellIds(boolean fDrawCellIds) {
 		this.fDisplayCellIds = fDrawCellIds;
+	}
+	
+	public boolean isDisplayVerticesCoordinates() {
+		return fDisplayVerticesCoordinates;
+	}
+
+	public void setDisplayVerticesCoordinates(boolean fDisplayVerticesCoordinates) {
+		this.fDisplayVerticesCoordinates = fDisplayVerticesCoordinates;
 	}
 	
 	public boolean isDisplayPolicyActionArrows() {
