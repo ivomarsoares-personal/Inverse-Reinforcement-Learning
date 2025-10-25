@@ -39,17 +39,17 @@ public class TRLGridUtil {
 	
 	public IRLGrid createSquareGrid( int aNumberOfRows ) {
 		
-		IRLGrid lSquareGrid = createGrid(aNumberOfRows, aNumberOfRows);
+		IRLGrid lSquareGrid = createGrid(aNumberOfRows, aNumberOfRows );
 		return lSquareGrid;
 		
 	}
 	
 	
-	public IRLGrid createGrid( final int aNumberOfRows, final int aNumberOfColums ){
+	public IRLGrid createGrid( final int aNumberOfRows, final int aNumberOfColumns ){
 
-		assert aNumberOfRows == aNumberOfColums;
+		assert aNumberOfRows == aNumberOfColumns;
 
-		if( aNumberOfRows != aNumberOfColums ){
+		if( aNumberOfRows != aNumberOfColumns ){
 			return null;
 		}
 
@@ -57,10 +57,45 @@ public class TRLGridUtil {
 
 		IRLGrid lRLSquareGrid = (IRLGrid) TRLFactory.createRLObject( IRL.sGRID );
 		lRLSquareGrid.setNumberOfRows(aNumberOfRows);
-		lRLSquareGrid.setNumberOfColumns(aNumberOfColums);
+		lRLSquareGrid.setNumberOfColumns(aNumberOfColumns);
+		
+		// Creating walls
+		
+		// North wall
+		IRLWall lNorthWall = (IRLWall) TRLFactory.createRLObject(IRLGridComponent.sWALL);
+		lNorthWall.setInitialVerticeXCoordinate(0);
+		lNorthWall.setInitialVerticeYCoordinate(0);
+		lNorthWall.setFinalVerticeXCoordinate(aNumberOfColumns);
+		lNorthWall.setFinalVerticeYCoordinate(0);
+		lRLSquareGrid.getWallList().add(lNorthWall);
+		
+		// West wall
+		IRLWall lWestWall = (IRLWall) TRLFactory.createRLObject(IRLGridComponent.sWALL);
+		lWestWall.setInitialVerticeXCoordinate(0);
+		lWestWall.setInitialVerticeYCoordinate(0);
+		lWestWall.setFinalVerticeXCoordinate(0);
+		lWestWall.setFinalVerticeYCoordinate(aNumberOfRows);
+		lRLSquareGrid.getWallList().add(lWestWall);
 
+		// South wall
+		IRLWall lSouthWall = (IRLWall) TRLFactory.createRLObject(IRLGridComponent.sWALL);
+		lSouthWall.setInitialVerticeXCoordinate(0);
+		lSouthWall.setInitialVerticeYCoordinate(aNumberOfRows);
+		lSouthWall.setFinalVerticeXCoordinate(aNumberOfRows);
+		lSouthWall.setFinalVerticeYCoordinate(aNumberOfColumns);
+		lRLSquareGrid.getWallList().add(lSouthWall);
+		
+		// East wall
+		IRLWall lEastWall = (IRLWall) TRLFactory.createRLObject(IRLGridComponent.sWALL);
+		lEastWall.setInitialVerticeXCoordinate(aNumberOfRows);
+		lEastWall.setInitialVerticeYCoordinate(0);
+		lEastWall.setFinalVerticeXCoordinate(aNumberOfRows);
+		lEastWall.setFinalVerticeYCoordinate(aNumberOfColumns);
+		lRLSquareGrid.getWallList().add(lEastWall);
+		
+		// Creating cells
 		for( int lRowIndex = 0; lRowIndex < aNumberOfRows; lRowIndex++ ){			
-			for( int lColumnIndex = 0; lColumnIndex < aNumberOfColums; lColumnIndex++ ){
+			for( int lColumnIndex = 0; lColumnIndex < aNumberOfColumns; lColumnIndex++ ){
 
 				final IRLCell lCell = (IRLCell) TRLFactory.createRLObject(IRLGridComponent.sCELL);
 
@@ -75,25 +110,21 @@ public class TRLGridUtil {
 
 				// North wall
 				if( lRowIndex == 0 ){
-					IRLWall lNorthWall = (IRLWall) TRLFactory.createRLObject(IRLGridComponent.sWALL);
 					lCell.setNorthWall(lNorthWall);
 				}
 
 				// West wall
 				if( lColumnIndex == 0 ){
-					IRLWall lWestWall = (IRLWall) TRLFactory.createRLObject(IRLGridComponent.sWALL);
 					lCell.setWestWall(lWestWall);
 				}
 
 				// South Wall
 				if( lRowIndex == aNumberOfRows - 1 ){
-					IRLWall lSouthWall = (IRLWall) TRLFactory.createRLObject(IRLGridComponent.sWALL);
 					lCell.setSouthWall(lSouthWall);
 				}
 
 				// East Wall
-				if( lColumnIndex == aNumberOfColums - 1 ){
-					IRLWall lEastWall = (IRLWall) TRLFactory.createRLObject(IRLGridComponent.sWALL);
+				if( lColumnIndex == aNumberOfColumns - 1 ){
 					lCell.setEastWall(lEastWall);
 				}				
 			}						

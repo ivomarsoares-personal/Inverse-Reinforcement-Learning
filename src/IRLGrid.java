@@ -31,5 +31,6 @@ public interface IRLGrid extends IRLGridComponent{
 	public IRLRewardFunction getRewardFunction();
 
 	public void setRewardFunction(IRLRewardFunction aRewardFunction);
+	public List<IRLWall> getWallList();
 
 }

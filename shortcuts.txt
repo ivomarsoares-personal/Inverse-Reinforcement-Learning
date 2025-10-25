@@ -1,0 +1,4 @@
+Eclipse:
+
+Ctrl + /:       Comment a line
+Alt + Shift + S: Create getters and setters for a field

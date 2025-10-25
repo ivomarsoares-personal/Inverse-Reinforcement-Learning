@@ -29,10 +29,12 @@ public class TRLMainFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	private TRLGridPanel      fGridPanel;
-	private IRLGrid           fSquareGrid;
+	private IRLGrid           fGrid;
 	private IRLAgent          fAgent;
 	private TRLIRLRewardPanel fIRLRewardPanel;
 	private JTabbedPane       fTabbedPane;
+	private int fNumberOfRows = 5;
+	private int fNumberOfColumns = 5;
 
 	public TRLMainFrame( ){
 
@@ -49,13 +51,16 @@ public class TRLMainFrame extends JFrame {
 
 		JMenu lGridMenu = new JMenu("Create");
 		JMenuItem lCreateGridMenuItem = new JMenuItem("1. Grid");
-		JMenuItem lCreateAgentMenuItem = new JMenuItem("2. Agent");
-		JMenuItem lCreateRewardFunctionMenuItem = new JMenuItem("3. Reward Function");
+		JMenuItem lCreateWallMenuItem = new JMenuItem("2. Wall");
+		JMenuItem lCreateAgentMenuItem = new JMenuItem("3. Agent");		
+		JMenuItem lCreateRewardFunctionMenuItem = new JMenuItem("4. Reward Function");
 		lGridMenu.add(lCreateGridMenuItem);
+		lGridMenu.add(lCreateWallMenuItem);
+		// Disable wall creation from the menu (not available in this UI)
+		lCreateWallMenuItem.setEnabled(false);
 		lGridMenu.add(lCreateAgentMenuItem);
 		lGridMenu.add(lCreateRewardFunctionMenuItem);
-
-
+		
 		JMenu lRLMenu = new JMenu("Reinforcement Learning");
 		JMenuItem lValueIterationMenuItem = new JMenuItem("1. Value Iteration");
 		JMenuItem lIRLMenuItem            = new JMenuItem("2. Inverse Reinforcement Learning");
@@ -81,10 +86,10 @@ public class TRLMainFrame extends JFrame {
 		add(lMenuBar, BorderLayout.NORTH);
 		add( fTabbedPane, BorderLayout.CENTER);
 
-		fSquareGrid = TRLGridUtil.getSharedInstance().createSquareGrid(5);
+		fGrid = TRLGridUtil.getSharedInstance().createSquareGrid(5);
 
-		fGridPanel.setGrid(fSquareGrid);
-		((ARLGrid)fSquareGrid).addObserver(fGridPanel);
+		fGridPanel.setGrid(fGrid);
+		((ARLGrid)fGrid).addObserver(fGridPanel);
 
 		//make sure the JFrame is visible
 		setVisible(true);
@@ -94,9 +99,8 @@ public class TRLMainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent aActionEvent) {
 
-				int lNumberOfRows = 5;
 
-				fSquareGrid = null;
+				fGrid = null;
 				fGridPanel.setGrid(null);
 				fGridPanel.setAgent(null);
 				fTabbedPane.removeAll();
@@ -110,19 +114,20 @@ public class TRLMainFrame extends JFrame {
 						JOptionPane.QUESTION_MESSAGE,
 						null,
 						null,
-						lNumberOfRows + "");
+						fNumberOfRows + "");
 
 				try{
-					lNumberOfRows = Integer.parseInt(lNumberOfRowsColumnsAsString);
+					fNumberOfRows = Integer.parseInt(lNumberOfRowsColumnsAsString);
+					fNumberOfColumns = fNumberOfRows;
 				}
 				catch( NumberFormatException aNumberFormatException ) {
 					JOptionPane.showMessageDialog(TRLMainFrame.this, "Not a number.", "Error" ,JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 
-				fSquareGrid = TRLGridUtil.getSharedInstance().createSquareGrid(lNumberOfRows);
-				fGridPanel.setGrid(fSquareGrid);
-				((ARLGrid)fSquareGrid).addObserver(fGridPanel);
+				fGrid = TRLGridUtil.getSharedInstance().createSquareGrid(fNumberOfRows);
+				fGridPanel.setGrid(fGrid);
+				((ARLGrid)fGrid).addObserver(fGridPanel);
 				fGridPanel.repaint();
 
 			}
@@ -136,12 +141,12 @@ public class TRLMainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent aActionEvent) {
 				
-				if( fSquareGrid == null ){
+				if( fGrid == null ){
 					JOptionPane.showMessageDialog(TRLMainFrame.this, "Create grid first.", "Error" ,JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				
-				int lNumberOfRows = fSquareGrid.getNumberOfRows();
+				int lNumberOfRows = fGrid.getNumberOfRows();
 
 				JTextField lInitialStateTextField             = new JTextField(5); 
 				lInitialStateTextField.setText( (lNumberOfRows * (lNumberOfRows - 1))+"");
@@ -191,7 +196,7 @@ public class TRLMainFrame extends JFrame {
 				}
 			
 				
-				int lNumberOfStates = fSquareGrid.getCellList().size();
+				int lNumberOfStates = fGrid.getCellList().size();
 				if( lInitialStateIndex < 0 || lInitialStateIndex >= lNumberOfStates ){
 					JOptionPane.showMessageDialog(TRLMainFrame.this, "Initial State Index must be greater or equal than 0 and lower than " +  lNumberOfStates + ".", "Error" ,JOptionPane.ERROR_MESSAGE);
 					return;
@@ -224,7 +229,7 @@ public class TRLMainFrame extends JFrame {
 				
 
 				fAgent = TRLAgentUtil.getSharedInstance().createAgent(
-						fSquareGrid, 
+						fGrid, 
 						lInitialStateIndex, 
 						lFinalStateIndex,
 						lCorrectActionProbability,
@@ -237,6 +242,60 @@ public class TRLMainFrame extends JFrame {
 			}
 		});
 		
+		
+		lCreateWallMenuItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent aActionEvent) {
+				
+				if( fGrid == null ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Create grid first.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				JTextField lInitialVerticeTextField = new JTextField(5);
+				JTextField lFinalVerticeTextField = new JTextField(5);				
+				
+				JPanel lCreateWallPanel = new JPanel();
+				lCreateWallPanel.add(new JLabel("Initial Vertice: "));
+				lCreateWallPanel.add(lInitialVerticeTextField);
+				lCreateWallPanel.add(new JLabel("Final Vertice:"));
+				lCreateWallPanel.add(lFinalVerticeTextField);
+				
+				int lResult = JOptionPane.showConfirmDialog(null, lCreateWallPanel, "Wall information", JOptionPane.OK_CANCEL_OPTION);
+				if (lResult != JOptionPane.OK_OPTION) {
+					return;
+				}
+				
+				int lInitialVerticeXCoordinate = TRLWallUtil.getSharedInstance().getVerticeXCoordinate( lInitialVerticeTextField.getText() );
+				int lInitialVerticeYCoordinate = TRLWallUtil.getSharedInstance().getVerticeYCoordinate( lInitialVerticeTextField.getText() );
+				int lFinalVerticeXCoordinate   = TRLWallUtil.getSharedInstance().getVerticeXCoordinate( lFinalVerticeTextField.getText() );
+				int lFinalVerticeYCoordinate   = TRLWallUtil.getSharedInstance().getVerticeYCoordinate( lFinalVerticeTextField.getText() );
+				
+				if( lInitialVerticeXCoordinate != lFinalVerticeXCoordinate && lInitialVerticeYCoordinate != lFinalVerticeYCoordinate ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Only horizontal and vertical walls are allowed.", "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if( lInitialVerticeXCoordinate < 0 || lFinalVerticeXCoordinate < 0 || lInitialVerticeYCoordinate < 0 || lFinalVerticeYCoordinate < 0) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Vertices coordinates cannot be smaller than 0.", "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if( lFinalVerticeXCoordinate > fNumberOfColumns ) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "The final vertice X coordinate " + lFinalVerticeXCoordinate + " cannot be greater than the number of columns of the grid " + fNumberOfColumns + "." , "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if( lFinalVerticeYCoordinate > fNumberOfRows ) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "The final vertice Y coordinate " + lFinalVerticeYCoordinate + " cannot be greater than the number of rows of the grid " + fNumberOfRows + "." , "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}			
+				
+				TRLWallUtil.getSharedInstance().createWall(fGrid, lInitialVerticeTextField.getText(), lFinalVerticeTextField.getText());
+				fGridPanel.repaint();
+			}			
+		});
 		
 		
 		
