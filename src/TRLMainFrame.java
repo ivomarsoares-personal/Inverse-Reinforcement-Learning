@@ -6,6 +6,7 @@ import java.util.HashMap;
 import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -49,22 +50,30 @@ public class TRLMainFrame extends JFrame {
 		setLocationRelativeTo(null);
 
 		JMenuBar lMenuBar = new JMenuBar();
+		
+		JMenu lFileMenu = new JMenu("File");
+		JMenuItem lNewMenuItem = new JMenuItem("New");
+		JMenuItem lSaveMenuItem = new JMenuItem("Save");
+		JMenuItem lLoadMenuItem = new JMenuItem("Load");
+		JMenuItem lExitMenuItem = new JMenuItem("Exit");
+		lFileMenu.add(lNewMenuItem);
+		lFileMenu.add(lSaveMenuItem);
+		lFileMenu.add(lLoadMenuItem);
+		lFileMenu.addSeparator();
+		lFileMenu.add(lExitMenuItem);
 
 		JMenu lGridMenu = new JMenu("Create");
-		JMenuItem lCreateGridMenuItem = new JMenuItem("1. Grid");
-		JMenuItem lCreateWallMenuItem = new JMenuItem("2. Wall");
-		JMenuItem lCreateAgentMenuItem = new JMenuItem("3. Agent");		
-		JMenuItem lCreateRewardFunctionMenuItem = new JMenuItem("4. Reward Function");
-		lGridMenu.add(lCreateGridMenuItem);
+		JMenuItem lCreateWallMenuItem = new JMenuItem("Wall");
+		JMenuItem lCreateAgentMenuItem = new JMenuItem("Agent");		
+		JMenuItem lCreateRewardFunctionMenuItem = new JMenuItem("Reward Function");
 		lGridMenu.add(lCreateWallMenuItem);
-		// Disable wall creation from the menu (not available in this UI)
 		lCreateWallMenuItem.setEnabled(true);
 		lGridMenu.add(lCreateAgentMenuItem);
 		lGridMenu.add(lCreateRewardFunctionMenuItem);
 		
 		JMenu lRLMenu = new JMenu("Reinforcement Learning");
-		JMenuItem lValueIterationMenuItem = new JMenuItem("1. Value Iteration");
-		JMenuItem lIRLMenuItem            = new JMenuItem("2. Inverse Reinforcement Learning");
+		JMenuItem lValueIterationMenuItem = new JMenuItem("Value Iteration");
+		JMenuItem lIRLMenuItem            = new JMenuItem("Inverse Reinforcement Learning");
 		lRLMenu.add(lValueIterationMenuItem);
 		lRLMenu.add(lIRLMenuItem);
 		
@@ -94,6 +103,7 @@ public class TRLMainFrame extends JFrame {
 		lHelpMenu.add(lTutorialMenuItem);
 		lHelpMenu.add(lAboutMenuItem);
 
+		lMenuBar.add(lFileMenu);
 		lMenuBar.add(lGridMenu);
 		lMenuBar.add(lRLMenu);
 		lMenuBar.add(lDisplayMenu);
@@ -108,42 +118,46 @@ public class TRLMainFrame extends JFrame {
 		add(lMenuBar, BorderLayout.NORTH);
 		add( fTabbedPane, BorderLayout.CENTER);
 
-		fGrid = TRLGridUtil.getSharedInstance().createSquareGrid(5);
-
-		fGridPanel.setGrid(fGrid);
 		fGridPanel.setDisplayCellIds( lCellIdCheckBoxMenuItem.isSelected() );
 		fGridPanel.setDisplayPolicyActionArrows( lPolicyArrowsCheckBoxMenuItem.isSelected() );
 		fGridPanel.setDisplayPolicyStateValues( lPolicyStateValuesBoxMenuItem.isSelected() );
 		fGridPanel.setDisplayQValues(lQValuesCheckBoxMenuItem.isSelected());
-		((ARLGrid)fGrid).addObserver(fGridPanel);
 
 		//make sure the JFrame is visible
 		setVisible(true);
-
-		lCreateGridMenuItem.addActionListener( new ActionListener() {
+		
+		lNewMenuItem.addActionListener( new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent aActionEvent) {
-
-
 				fGrid = null;
 				fGridPanel.setGrid(null);
 				fGridPanel.setAgent(null);
 				fTabbedPane.removeAll();
 				fTabbedPane.addTab("Grid",fGridPanel);
+				
+				JTextField lGridWorldNameTextField = new JTextField(25); 
+				lGridWorldNameTextField.setText("");
+				JTextField lNumberOfRowsColumnsTextField = new JTextField(5); 
+				lNumberOfRowsColumnsTextField.setText("");
 
-
-				String lNumberOfRowsColumnsAsString = (String)JOptionPane.showInputDialog(
-						TRLMainFrame.this,
-						"Number of Rows/Columns",
-						"Gridworld",
-						JOptionPane.QUESTION_MESSAGE,
-						null,
-						null,
-						fNumberOfRows + "");
+				
+				JPanel lCreateGridWorldPanel = new JPanel();
+							
+				lCreateGridWorldPanel.add(new JLabel("GridWorld Name:"));
+				lCreateGridWorldPanel.add(lGridWorldNameTextField);
+				
+				lCreateGridWorldPanel.add(new JLabel("Number of Rows/Columns:"));
+				lCreateGridWorldPanel.add(lNumberOfRowsColumnsTextField);
+				lNumberOfRowsColumnsTextField.setText(fNumberOfRows + "");
+				
+				int lResult = JOptionPane.showConfirmDialog(null, lCreateGridWorldPanel, "GridWorld information", JOptionPane.OK_CANCEL_OPTION);
+				if (lResult != JOptionPane.OK_OPTION) {
+					return;
+				}
 
 				try{
-					fNumberOfRows = Integer.parseInt(lNumberOfRowsColumnsAsString);
+					fNumberOfRows = Integer.parseInt(lNumberOfRowsColumnsTextField.getText());
 					fNumberOfColumns = fNumberOfRows;
 				}
 				catch( NumberFormatException aNumberFormatException ) {
@@ -151,14 +165,76 @@ public class TRLMainFrame extends JFrame {
 					return;
 				}
 
+				// Create the grid first, then set its name and wire it to the UI.
 				fGrid = TRLGridUtil.getSharedInstance().createSquareGrid(fNumberOfRows);
+				fGrid.setName(lGridWorldNameTextField.getText());
+				setTitle("GridWorld - " + fGrid.getName() + " - Inverse Reinforcement Learning");
 				fGridPanel.setGrid(fGrid);
 				((ARLGrid)fGrid).addObserver(fGridPanel);
 				fGridPanel.repaint();
-
 			}
 		});
 		
+		lSaveMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent aActionEvent) {
+				if( fGrid == null ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Create grid first.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if( fAgent == null ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Create agent first.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				try{
+					int lResult = TRLFileUtil.getSharedInstance().saveToFolder(fGrid);
+					if ( lResult == JFileChooser.APPROVE_OPTION ){
+						JOptionPane.showMessageDialog(TRLMainFrame.this, "Saved successfully.", "Save" ,JOptionPane.INFORMATION_MESSAGE);
+					}
+				}
+				catch(Exception e){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Error saving file: " + e.getMessage(), "Error" ,JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		lLoadMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent aActionEvent) {
+				IRLGrid lLoadedGrid = TRLFileUtil.getSharedInstance().loadGridWorld();
+				if( lLoadedGrid == null ){
+					return; // user cancelled or load failed
+				}
+				// Wire loaded grid into UI
+				fGrid = lLoadedGrid;
+				fGridPanel.setGrid(fGrid);
+				((ARLGrid)fGrid).addObserver(fGridPanel);
+				// if there are agents, select first and wire it
+				if( fGrid.getAgentList() != null && !fGrid.getAgentList().isEmpty() ){
+					fAgent = fGrid.getAgentList().get(0);
+					fGridPanel.setAgent(fAgent);
+					((ARLAgent)fAgent).addObserver(fGridPanel);
+				}
+				// refresh tabs and title
+				fTabbedPane.removeAll();
+				fTabbedPane.addTab("Grid", fGridPanel);
+				setTitle("GridWorld - " + fGrid.getName() + " - Inverse Reinforcement Learning");
+				fGridPanel.repaint();
+			}
+		});
+		
+		lExitMenuItem.addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent aActionEvent) {
+				System.exit(0);
+			}
+		});
+
 		lCellIdCheckBoxMenuItem.addActionListener( new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent aActionEvent) {				
@@ -297,9 +373,9 @@ public class TRLMainFrame extends JFrame {
 						fGrid, 
 						lInitialStateIndex, 
 						lFinalStateIndex,
+						lDiscountingFactor,
 						lCorrectActionProbability,
 						lActionNoiseProbability);
-				fAgent.setDiscountingFactor(lDiscountingFactor);
 				fGridPanel.setAgent(fAgent);
 				((ARLAgent)fAgent).addObserver(fGridPanel);
 				fGridPanel.repaint();
@@ -553,7 +629,7 @@ public class TRLMainFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent aActionEvent) {
-				JOptionPane.showMessageDialog(TRLMainFrame.this, "Ivomar Brito Soares, britosoaresivomar@gmail.com", "Gridworld" ,JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(TRLMainFrame.this, "Ivomar Brito Soares, ivomarbsoares@gmail.com", "Gridworld" ,JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 	}

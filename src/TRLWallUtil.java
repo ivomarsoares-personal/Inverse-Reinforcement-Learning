@@ -14,13 +14,17 @@ public class TRLWallUtil {
 		int lFinalVerticeXCoordinate   = getVerticeXCoordinate( aFinalVertice );
 		int lFinalVerticeYCoordinate   = getVerticeYCoordinate( aFinalVertice );
 	
-		IRLWall lWall = (IRLWall) TRLFactory.createRLObject(IRLGridComponent.sWALL);
-		lWall.setInitialVerticeXCoordinate(lInitialVerticeXCoordinate);
-		lWall.setInitialVerticeYCoordinate(lInitialVerticeYCoordinate);
-		lWall.setFinalVerticeXCoordinate(lFinalVerticeXCoordinate);
-		lWall.setFinalVerticeYCoordinate(lFinalVerticeYCoordinate);
-		aGrid.getWallList().add(lWall);
+
+		return createWall(aGrid, lInitialVerticeXCoordinate, lInitialVerticeYCoordinate, lFinalVerticeXCoordinate, lFinalVerticeYCoordinate);
+	}
 	
+	public IRLWall createWall(IRLGrid aGrid, int aInitialVerticeXCoordinate, int aInitialVerticeYCoordinate, int aFinalVerticeXCoordinate, int  aFinalVerticeYCoordinate) {
+		IRLWall lWall = (IRLWall) TRLFactory.createRLObject(IRLGridComponent.sWALL);
+		lWall.setInitialVerticeXCoordinate(aInitialVerticeXCoordinate);
+		lWall.setInitialVerticeYCoordinate(aInitialVerticeYCoordinate);
+		lWall.setFinalVerticeXCoordinate(aFinalVerticeXCoordinate);
+		lWall.setFinalVerticeYCoordinate(aFinalVerticeYCoordinate);
+		aGrid.getWallList().add(lWall);
 		return lWall;
 	}
 	

@@ -8,6 +8,10 @@ import org.apache.commons.math3.linear.RealMatrix;
  *
  */
 public interface IRLGrid extends IRLGridComponent{
+	
+	public String getName();
+	public void setName(String fName);
+	
 	public List<IRLCell> getCellList();
 
 
@@ -32,5 +36,8 @@ public interface IRLGrid extends IRLGridComponent{
 
 	public void setRewardFunction(IRLRewardFunction aRewardFunction);
 	public List<IRLWall> getWallList();
+	public List<IRLAgent> getAgentList();
+	
+	
 
 }
