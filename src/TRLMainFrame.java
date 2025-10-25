@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import javax.swing.Box;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -67,6 +68,23 @@ public class TRLMainFrame extends JFrame {
 		lRLMenu.add(lValueIterationMenuItem);
 		lRLMenu.add(lIRLMenuItem);
 		
+		JMenu lDisplayMenu = new JMenu("Display");
+		JCheckBoxMenuItem lCellIdCheckBoxMenuItem = new JCheckBoxMenuItem("Cell Id");
+		JMenu lPolicyMenu = new JMenu("Policy");
+		JCheckBoxMenuItem lPolicyArrowsCheckBoxMenuItem = new JCheckBoxMenuItem("Arrows");
+		JCheckBoxMenuItem lPolicyStateValuesBoxMenuItem = new JCheckBoxMenuItem("State Values");
+		lPolicyMenu.add(lPolicyArrowsCheckBoxMenuItem);
+		lPolicyMenu.add(lPolicyStateValuesBoxMenuItem);
+		JCheckBoxMenuItem lQValuesCheckBoxMenuItem = new JCheckBoxMenuItem("QValues");
+		
+		lCellIdCheckBoxMenuItem.setSelected(true);
+		lPolicyArrowsCheckBoxMenuItem.setSelected(true);
+		lPolicyStateValuesBoxMenuItem.setSelected(true);
+		lQValuesCheckBoxMenuItem.setSelected(true);
+		lDisplayMenu.add(lCellIdCheckBoxMenuItem);
+		lDisplayMenu.add(lPolicyMenu);
+		lDisplayMenu.add(lQValuesCheckBoxMenuItem);
+		
 		JMenu lHelpMenu = new JMenu("Help");
 		JMenuItem lTutorialMenuItem = new JMenuItem("Tutorial");
 		JMenuItem lAboutMenuItem = new JMenuItem("About GridWorld");
@@ -75,6 +93,7 @@ public class TRLMainFrame extends JFrame {
 
 		lMenuBar.add(lGridMenu);
 		lMenuBar.add(lRLMenu);
+		lMenuBar.add(lDisplayMenu);
 		lMenuBar.add(lHelpMenu);
 		
 		fGridPanel = new TRLGridPanel();
@@ -89,6 +108,10 @@ public class TRLMainFrame extends JFrame {
 		fGrid = TRLGridUtil.getSharedInstance().createSquareGrid(5);
 
 		fGridPanel.setGrid(fGrid);
+		fGridPanel.setDisplayCellIds( lCellIdCheckBoxMenuItem.isSelected() );
+		fGridPanel.setDisplayPolicyActionArrows( lPolicyArrowsCheckBoxMenuItem.isSelected() );
+		fGridPanel.setDisplayPolicyStateValues( lPolicyStateValuesBoxMenuItem.isSelected() );
+		fGridPanel.setDisplayQValues(lQValuesCheckBoxMenuItem.isSelected());
 		((ARLGrid)fGrid).addObserver(fGridPanel);
 
 		//make sure the JFrame is visible
@@ -133,7 +156,37 @@ public class TRLMainFrame extends JFrame {
 			}
 		});
 		
+		lCellIdCheckBoxMenuItem.addActionListener( new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent aActionEvent) {				
+				fGridPanel.setDisplayCellIds( lCellIdCheckBoxMenuItem.isSelected() );
+				fGridPanel.repaint();
+			}			
+		});
 		
+		lPolicyArrowsCheckBoxMenuItem.addActionListener( new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent aActionEvent) {				
+				fGridPanel.setDisplayPolicyActionArrows(lPolicyArrowsCheckBoxMenuItem.isSelected());
+				fGridPanel.repaint();
+			}			
+		});
+		
+		lPolicyStateValuesBoxMenuItem.addActionListener( new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent aActionEvent) {				
+				fGridPanel.setDisplayPolicyStateValues(lPolicyStateValuesBoxMenuItem.isSelected());
+				fGridPanel.repaint();
+			}			
+		});
+		
+		lQValuesCheckBoxMenuItem.addActionListener( new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent aActionEvent) {				
+				fGridPanel.setDisplayQValues( lQValuesCheckBoxMenuItem.isSelected() );
+				fGridPanel.repaint();
+			}			
+		});
 		
 		
 		lCreateAgentMenuItem.addActionListener(new ActionListener() {

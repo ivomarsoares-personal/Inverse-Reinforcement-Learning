@@ -51,6 +51,12 @@ public class TRLGridPanel extends JPanel implements Observer {
 	private double fCellHeightInPixels;
 	private int fGridLengthInPixels;
 
+	
+	private boolean fDisplayCellIds;
+	private boolean fDisplayPolicyActionArrows;
+	private boolean fDisplayPolicyStateValues;
+	private boolean fDisplayQValues;
+	
 
 	@Override
 	public void update(Observable aObservable, Object aObject) {
@@ -179,6 +185,10 @@ public class TRLGridPanel extends JPanel implements Observer {
 	
 	
 	private void drawCellId(  final Component aCanvas, final Graphics aGraphics ){
+		
+		if( !fDisplayCellIds ){
+			return;
+		}
 
 		Graphics2D lGraphics2D = (Graphics2D)aGraphics;
 		lGraphics2D.setColor(sCELL_ID_COLOR);		
@@ -232,6 +242,7 @@ public class TRLGridPanel extends JPanel implements Observer {
 			return;
 		}
 
+		lGraphics2D.setFont (sCELL_ID_FONT);
 		lGraphics2D.setStroke(sPOLICY_ACTION_ARROW_STROKE);
 		lGraphics2D.setColor(sPOLICY_ACTION_ARROW_COLOR);
 
@@ -284,10 +295,12 @@ public class TRLGridPanel extends JPanel implements Observer {
 				lFinalY = (int) ( fGridYInPixels + lCellRowIndex * fCellHeightInPixels + fCellHeightInPixels / 2.0  );
 			}
 
-			if( lAction != null ){
+			if( fDisplayPolicyActionArrows && lAction != null ){
 				drawArrow(aGraphics, lInitialX, lInitialY, lFinalX, lFinalY);
 			}
-			lGraphics2D.drawString(lStateValueAsString, (int)((lInitialX + lFinalX ) / 2.0 + 10.0), (int)((lInitialY + lFinalY)/2.0 -10.0));
+			if( fDisplayPolicyStateValues ) {
+				lGraphics2D.drawString(lStateValueAsString, (int)((lInitialX + lFinalX ) / 2.0 + 10.0), (int)((lInitialY + lFinalY)/2.0 -10.0));
+			}
 		}
 	}
 	
@@ -313,7 +326,7 @@ public class TRLGridPanel extends JPanel implements Observer {
 	private void drawQValues( final Component aCanvas, final Graphics aGraphics ){
 		Graphics2D lGraphics2D = (Graphics2D)aGraphics;
 
-		if( getAgent() == null ){
+		if( !fDisplayQValues || getAgent() == null ){
 			return;
 		}
 
@@ -324,6 +337,7 @@ public class TRLGridPanel extends JPanel implements Observer {
 		}
 
 		lGraphics2D.setColor(Color.red);
+		lGraphics2D.setFont (sCELL_ID_FONT);
 
 
 		HashMap<IRLState, HashMap<IRLAction, Double>> lQValueHashMap = lPolicy.getQValueHashMap();
@@ -389,5 +403,37 @@ public class TRLGridPanel extends JPanel implements Observer {
 
 	public void setAgent(IRLAgent aAgent) {
 		fAgent = aAgent;
+	}
+	
+	public boolean isDisplayCellIds() {
+		return fDisplayCellIds;
+	}
+
+	public void setDisplayCellIds(boolean fDrawCellIds) {
+		this.fDisplayCellIds = fDrawCellIds;
+	}
+	
+	public boolean isDisplayPolicyActionArrows() {
+		return fDisplayPolicyActionArrows;
+	}
+
+	public void setDisplayPolicyActionArrows(boolean fDisplayPolicyActionArrows) {
+		this.fDisplayPolicyActionArrows = fDisplayPolicyActionArrows;
+	}
+
+	public boolean isDisplayPolicyStateValues() {
+		return fDisplayPolicyStateValues;
+	}
+
+	public void setDisplayPolicyStateValues(boolean fDisplayPolicyStateValues) {
+		this.fDisplayPolicyStateValues = fDisplayPolicyStateValues;
+	}
+	
+	public boolean isDisplayQValues() {
+		return fDisplayQValues;
+	}
+
+	public void setDisplayQValues(boolean fDisplayQValues) {
+		this.fDisplayQValues = fDisplayQValues;
 	}
 }
