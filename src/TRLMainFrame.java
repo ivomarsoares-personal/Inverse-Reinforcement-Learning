@@ -58,7 +58,7 @@ public class TRLMainFrame extends JFrame {
 		lGridMenu.add(lCreateGridMenuItem);
 		lGridMenu.add(lCreateWallMenuItem);
 		// Disable wall creation from the menu (not available in this UI)
-		lCreateWallMenuItem.setEnabled(false);
+		lCreateWallMenuItem.setEnabled(true);
 		lGridMenu.add(lCreateAgentMenuItem);
 		lGridMenu.add(lCreateRewardFunctionMenuItem);
 		
@@ -70,6 +70,7 @@ public class TRLMainFrame extends JFrame {
 		
 		JMenu lDisplayMenu = new JMenu("Display");
 		JCheckBoxMenuItem lCellIdCheckBoxMenuItem = new JCheckBoxMenuItem("Cell Id");
+		JCheckBoxMenuItem lVerticesCoordinatesCheckBoxMenuItem = new JCheckBoxMenuItem("Vertices Coordinages");		
 		JMenu lPolicyMenu = new JMenu("Policy");
 		JCheckBoxMenuItem lPolicyArrowsCheckBoxMenuItem = new JCheckBoxMenuItem("Arrows");
 		JCheckBoxMenuItem lPolicyStateValuesBoxMenuItem = new JCheckBoxMenuItem("State Values");
@@ -78,10 +79,12 @@ public class TRLMainFrame extends JFrame {
 		JCheckBoxMenuItem lQValuesCheckBoxMenuItem = new JCheckBoxMenuItem("QValues");
 		
 		lCellIdCheckBoxMenuItem.setSelected(true);
+		lVerticesCoordinatesCheckBoxMenuItem.setSelected(false);
 		lPolicyArrowsCheckBoxMenuItem.setSelected(true);
 		lPolicyStateValuesBoxMenuItem.setSelected(true);
 		lQValuesCheckBoxMenuItem.setSelected(true);
 		lDisplayMenu.add(lCellIdCheckBoxMenuItem);
+		lDisplayMenu.add(lVerticesCoordinatesCheckBoxMenuItem);
 		lDisplayMenu.add(lPolicyMenu);
 		lDisplayMenu.add(lQValuesCheckBoxMenuItem);
 		
@@ -163,6 +166,15 @@ public class TRLMainFrame extends JFrame {
 				fGridPanel.repaint();
 			}			
 		});
+		
+		lVerticesCoordinatesCheckBoxMenuItem.addActionListener( new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent aActionEvent) {				
+				fGridPanel.setDisplayVerticesCoordinates( lVerticesCoordinatesCheckBoxMenuItem.isSelected() );
+				fGridPanel.repaint();
+			}			
+		});
+		
 		
 		lPolicyArrowsCheckBoxMenuItem.addActionListener( new ActionListener() {
 			@Override
