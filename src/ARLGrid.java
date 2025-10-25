@@ -11,8 +11,12 @@ import org.apache.commons.math3.linear.RealMatrix;
  */
 public abstract class ARLGrid extends Observable implements IRLGrid {
 	
+	private String fName;
 	private int fNumberOfRows;
-	private int fNumberOfColumns;	
+	private int fNumberOfColumns;
+	private List<IRLAgent> fAgentList = new ArrayList<IRLAgent>();
+
+
 	private List<IRLCell> fCellList = new ArrayList<IRLCell>();
 	private List<IRLWall> fWallList = new ArrayList<IRLWall>();
 	
@@ -24,6 +28,14 @@ public abstract class ARLGrid extends Observable implements IRLGrid {
 	private RealMatrix fTransitionProbabilityMatrixMoveWest;
 	
 
+	public String getName() {
+		return fName;
+	}
+
+	public void setName(String fName) {
+		this.fName = fName;
+	}
+	
 	public int getNumberOfRows() {
 		return fNumberOfRows;
 	}
@@ -78,6 +90,10 @@ public abstract class ARLGrid extends Observable implements IRLGrid {
 		fNumberOfColumns = aNumberOfColumns;
 		setChanged();
 		notifyObservers();
+	}
+	
+	public List<IRLAgent> getAgentList() {
+		return fAgentList;
 	}
 
 	public List<IRLCell> getCellList() {

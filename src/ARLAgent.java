@@ -10,8 +10,12 @@ import org.apache.commons.math3.linear.RealMatrix;
  */
 public abstract class ARLAgent extends Observable implements IRLAgent {
 	
+	protected int fId;
+	
 	private IRLGrid fGrid;
 	private Double  fDiscountingFactor;
+	private Double fCorrectActionProbability;
+	private Double fActionNoiseProbability;
 	private IRLPolicy                fPolicy;
 	private java.util.List<IRLState> fStateList = new ArrayList<IRLState>();
 	private IRLState		         fInitialState;
@@ -96,6 +100,22 @@ public abstract class ARLAgent extends Observable implements IRLAgent {
 
 	public void setDiscountingFactor(Double aDiscountingFactor) {
 		fDiscountingFactor = aDiscountingFactor;
+	}
+	
+	public Double getCorrectActionProbability() {
+		return fCorrectActionProbability;
+	}
+
+	public void setCorrectActionProbability(Double fCorrectActionProbability) {
+		this.fCorrectActionProbability = fCorrectActionProbability;
+	}
+
+	public Double getActionNoiseProbability() {
+		return fActionNoiseProbability;
+	}
+
+	public void setActionNoiseProbability(Double fActionNoiseProbability) {
+		this.fActionNoiseProbability = fActionNoiseProbability;
 	}
 	
 	public RealMatrix getTPMatrixNorth() {

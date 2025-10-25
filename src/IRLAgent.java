@@ -21,6 +21,10 @@ public interface IRLAgent extends IRL {
 	public void setAbsorbingState(IRLState aAbsorbingState);
 	public Double getDiscountingFactor();
 	public void setDiscountingFactor(Double aDiscountingFactor);
+	public Double getCorrectActionProbability();
+	public void setCorrectActionProbability(Double fCorrectActionProbability);
+	public Double getActionNoiseProbability();
+	public void setActionNoiseProbability(Double fActionNoiseProbability);
 	public RealMatrix getTPMatrixNorth();
 	public void setTPMatrixNorth(RealMatrix aTPMatrixNorth);
 	public RealMatrix getTPMatrixEast();

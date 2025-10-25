@@ -4,5 +4,12 @@
  * providing the concrete type expected by factories and utilities.
  */
 public class TRLAgent extends ARLAgent {
+
+	public static int COUNT = 0;
+	
+	public void TRWall() {
+		fId = COUNT;
+		COUNT++;		
+	}
 	
 }
