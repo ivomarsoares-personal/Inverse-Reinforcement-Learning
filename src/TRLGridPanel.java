@@ -194,7 +194,7 @@ public class TRLGridPanel extends JPanel implements Observer {
 		}
 
 		Graphics2D lGraphics2D = (Graphics2D)aGraphics;
-		lGraphics2D.setColor(sCELL_ID_COLOR);		
+		lGraphics2D.setColor(sCELL_ID_COLOR); 
 		lGraphics2D.setFont (sCELL_ID_FONT);
 
 		final List<IRLCell> lCellList = getGrid().getCellList();
@@ -206,15 +206,32 @@ public class TRLGridPanel extends JPanel implements Observer {
 			final int     lCellColumnIndex = lCell.getColumnIndex();
 
 			String lCellIdAsString = lCell.getIndex()+"";
+			String lCellCoordAsString = "(" + lCellColumnIndex + "," + lCellRowIndex + ")";
 
+			// Compute bounding sizes for id and coordinate using current font
+			FontMetrics lFontMetrics = aGraphics.getFontMetrics();
+			Rectangle2D lIdBounds = lFontMetrics.getStringBounds(lCellIdAsString, lGraphics2D);
+			Rectangle2D lCoordBounds = lFontMetrics.getStringBounds(lCellCoordAsString, lGraphics2D);
 
-			drawStringCentered(
-					lCellIdAsString, 
-					(int) ( fGridXInPixels + lCellColumnIndex * fCellWidthInPixels ), 
-					(int) ( fGridYInPixels + lCellRowIndex * fCellHeightInPixels ), 
-					(int) (fCellWidthInPixels), 
-					(int) (fCellHeightInPixels), 
-					aGraphics);
+			int lCellXInPixels = (int) ( fGridXInPixels + lCellColumnIndex * fCellWidthInPixels );
+			int lCellYInPixels = (int) ( fGridYInPixels + lCellRowIndex * fCellHeightInPixels );
+			int lCellWidthInPixels = (int) (fCellWidthInPixels);
+			int lCellHeightInPixels = (int) (fCellHeightInPixels);
+
+			// Horizontal centers for each string
+			int lIdX = (int) Math.round(lCellXInPixels + (lCellWidthInPixels - lIdBounds.getWidth()) / 2.0);
+			int lCoordX = (int) Math.round(lCellXInPixels + (lCellWidthInPixels - lCoordBounds.getWidth()) / 2.0);
+
+			// Vertical centering for the two-line block
+			double lTotalTextHeight = lIdBounds.getHeight() + lCoordBounds.getHeight();
+			double lTopOfTextBlock = lCellYInPixels + (lCellHeightInPixels - lTotalTextHeight) / 2.0;
+
+			int lIdBaseline = (int) Math.round(lTopOfTextBlock + lFontMetrics.getAscent());
+			int lCoordBaseline = (int) Math.round(lTopOfTextBlock + lIdBounds.getHeight() + lFontMetrics.getAscent());
+
+			// Draw both strings
+			lGraphics2D.drawString(lCellIdAsString, lIdX, lIdBaseline);
+			lGraphics2D.drawString(lCellCoordAsString, lCoordX, lCoordBaseline);
 
 		}
 	}

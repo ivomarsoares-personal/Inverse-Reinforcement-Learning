@@ -20,7 +20,7 @@ public abstract class ARLCell implements IRLCell {
 	private IRLWall fEastWall;
 	private IRLWall fSouthWall;
 	private IRLWall fWestWall;
-	
+
 	public Integer getIndex() {
 		return fIndex;
 	}
