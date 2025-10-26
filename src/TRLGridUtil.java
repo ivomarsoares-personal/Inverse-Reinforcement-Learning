@@ -93,7 +93,7 @@ public class TRLGridUtil {
 
 				lCell.setRowIndex(lRowIndex);
 				lCell.setColumnIndex(lColumnIndex);
-				lCell.setIndex(lIndex);
+				lCell.setIndex(lIndex);				
 				lIndex++;
 
 				lGrid.getCellList().add(lCell);
@@ -103,21 +103,25 @@ public class TRLGridUtil {
 				// North wall
 				if( lRowIndex == 0 ){
 					lCell.setNorthWall(lNorthWall);
+					lNorthWall.getSouthCellsList().add(lCell);
 				}
 
 				// West wall
 				if( lColumnIndex == 0 ){
 					lCell.setWestWall(lWestWall);
+					lWestWall.getEastCellsList().add(lCell);
 				}
 
 				// South Wall
 				if( lRowIndex == aNumberOfRows - 1 ){
 					lCell.setSouthWall(lSouthWall);
+					lSouthWall.getNorthCellsList().add(lCell);
 				}
 
 				// East Wall
 				if( lColumnIndex == aNumberOfColumns - 1 ){
 					lCell.setEastWall(lEastWall);
+					lEastWall.getWestCellsList().add(lCell);
 				}				
 			}						
 		}	

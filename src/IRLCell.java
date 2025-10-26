@@ -31,5 +31,4 @@ public interface IRLCell extends IRLGridComponent {
 	public  void setSouthWall(IRLWall aSouthWall);
 	public  IRLWall getWestWall();
 	public  void setWestWall(IRLWall aWestWall);
-
 }

@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Abstract base for wall objects used by grids. Concrete implementations may
@@ -11,6 +13,12 @@ public abstract class ARLWall implements IRLWall{
 	private int fInitialVerticeYCoordinate;
 	private int fFinalVerticeXCoordinate;
 	private int fFinalVerticeYCoordinate;
+	
+	private List<IRLCell> fNorthCellsList = new ArrayList<IRLCell>();
+	private List<IRLCell> fEastCellsList = new ArrayList<IRLCell>();
+	private List<IRLCell> fWestCellsList = new ArrayList<IRLCell>();
+	private List<IRLCell> fSouthCellsList = new ArrayList<IRLCell>();
+	
 	
 	
 	public int getInitialVerticeXCoordinate() {
@@ -37,6 +45,29 @@ public abstract class ARLWall implements IRLWall{
 	public void setFinalVerticeYCoordinate(int fFinalVerticeYCoordinate) {
 		this.fFinalVerticeYCoordinate = fFinalVerticeYCoordinate;
 	}
-		
+	public List<IRLCell> getNorthCellsList() {
+		return fNorthCellsList;
+	}
+	public void setNorthCellsList(List<IRLCell> fNorthCellsList) {
+		this.fNorthCellsList = fNorthCellsList;
+	}
+	public List<IRLCell> getEastCellsList() {
+		return fEastCellsList;
+	}
+	public void setEastCellsList(List<IRLCell> fEastCellsList) {
+		this.fEastCellsList = fEastCellsList;
+	}
+	public List<IRLCell> getWestCellsList() {
+		return fWestCellsList;
+	}
+	public void setWestCellsList(List<IRLCell> fWestCellsList) {
+		this.fWestCellsList = fWestCellsList;
+	}
+	public List<IRLCell> getSouthCellsList() {
+		return fSouthCellsList;
+	}
+	public void setSouthCellsList(List<IRLCell> fSouthCellsList) {
+		this.fSouthCellsList = fSouthCellsList;
+	}		
 	
 }

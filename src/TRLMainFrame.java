@@ -2,6 +2,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.swing.Box;
@@ -104,10 +105,18 @@ public class TRLMainFrame extends JFrame {
 		lHelpMenu.add(lTutorialMenuItem);
 		lHelpMenu.add(lAboutMenuItem);
 
+		JMenu lDebugMenu = new JMenu("Debug");
+		JMenuItem lPrintWallsInfoMenuItem = new JMenuItem("Print Walls Info");
+		JMenuItem lPrintCellsInfoMenuItem = new JMenuItem("Print Cells Info");
+		lDebugMenu.add(lPrintWallsInfoMenuItem);
+		lDebugMenu.add(lPrintCellsInfoMenuItem);
+		
+		
 		lMenuBar.add(lFileMenu);
 		lMenuBar.add(lGridMenu);
 		lMenuBar.add(lRLMenu);
 		lMenuBar.add(lDisplayMenu);
+		lMenuBar.add(lDebugMenu);
 		lMenuBar.add(lHelpMenu);
 		
 		fGridPanel = new TRLGridPanel();
@@ -138,7 +147,7 @@ public class TRLMainFrame extends JFrame {
 				fTabbedPane.addTab("Grid",fGridPanel);
 				
 				JTextField lGridWorldNameTextField = new JTextField(25); 
-				lGridWorldNameTextField.setText("");
+				lGridWorldNameTextField.setText("untitled");
 				JTextField lNumberOfRowsTextField = new JTextField(5); 
 				lNumberOfRowsTextField.setText("");
 				JTextField lNumberOfColumnsTextField = new JTextField(5); 
@@ -177,7 +186,7 @@ public class TRLMainFrame extends JFrame {
 				}
 
 				// Create the grid first, then set its name and wire it to the UI.
-				fGrid = TRLGridUtil.getSharedInstance().createGrid(fNumberOfRows, fNumberOfColumns);
+				fGrid = TRLGridUtil.getSharedInstance().createGrid(fNumberOfRows, fNumberOfColumns);				
 				fGrid.setName(lGridWorldNameTextField.getText());
 				setTitle("GridWorld - " + fGrid.getName() + " - Inverse Reinforcement Learning");
 				fGridPanel.setGrid(fGrid);
@@ -637,6 +646,109 @@ public class TRLMainFrame extends JFrame {
 						System.err.println("UnboundedSolutionException for Lambda " + lLambda );
 						continue;
 					}
+				}
+			}
+		});
+		
+		lPrintWallsInfoMenuItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent aActionEvent) {
+				
+				if( fGrid == null ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Create grid first.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				List<IRLWall> lWallsList = fGrid.getWallList();
+				for (int lWallIndex = 0; lWallIndex < lWallsList.size(); lWallIndex++ ) {
+					IRLWall lWall = lWallsList.get(lWallIndex);
+					System.out.println( String.format("Wall %d: Initial Vertice (%d,%d), Final Vertice (%d,%d)", 
+							lWallIndex,
+							lWall.getInitialVerticeXCoordinate(),
+							lWall.getInitialVerticeYCoordinate(),
+							lWall.getFinalVerticeXCoordinate(),
+							lWall.getFinalVerticeYCoordinate()));
+					
+					List<IRLCell> lNorthCellsList = lWall.getNorthCellsList();
+					if (! lNorthCellsList.isEmpty()) {
+						System.out.print("  North Cells: ");
+						for (IRLCell lCell : lNorthCellsList) {
+							System.out.print( lCell.getIndex() + " " );
+						}
+					}
+					
+					List<IRLCell> lSouthCellsList = lWall.getSouthCellsList();
+					if (! lSouthCellsList.isEmpty()) {
+						System.out.print("  South Cells: ");
+						for (IRLCell lCell : lSouthCellsList) {
+							System.out.print( lCell.getIndex() + " " );
+						}
+					}
+					List<IRLCell> lEastCellsList  = lWall.getEastCellsList();
+					if (! lEastCellsList.isEmpty()) {
+						System.out.print("  East Cells: ");
+						for (IRLCell lCell : lEastCellsList) {
+							System.out.print( lCell.getIndex() + " " );
+						}
+					}
+					
+					List<IRLCell> lWestCellsList  = lWall.getWestCellsList();
+					if (! lWestCellsList.isEmpty()) {
+						System.out.print("  West Cells: ");
+						for (IRLCell lCell : lWestCellsList) {
+							System.out.print( lCell.getIndex() + " " );
+						}
+					}
+					
+					System.out.println("\n\n");
+				}				
+			}			
+		});
+		
+		lPrintCellsInfoMenuItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent aActionEvent) {
+				
+				if( fGrid == null ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Create grid first.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				List<IRLCell> lCellsList = fGrid.getCellList();
+				for (int lCellIndex = 0; lCellIndex < lCellsList.size(); lCellIndex++ ) {
+					IRLCell lCell = lCellsList.get(lCellIndex);
+					System.out.println( String.format("Cell %d: Coordinates (%d,%d)", 
+							lCellIndex,
+							lCell.getColumnIndex(),
+							lCell.getRowIndex()));
+					
+					IRLCell lNorthCell = lCell.getNorthCell();
+					if (lNorthCell != null)	System.out.println("  North Cell: " + lNorthCell.getIndex() );
+					
+					IRLCell lSouthCell = lCell.getSouthCell();
+					if (lSouthCell != null) System.out.println("  South Cell: " + lSouthCell.getIndex() );
+					
+					IRLCell lEastCell  = lCell.getEastCell();
+					if (lEastCell != null) System.out.println("  East Cell: " + lEastCell.getIndex() );
+					
+					IRLCell lWestCell  = lCell.getWestCell();
+					if (lWestCell != null) System.out.println("  West Cell: " + lWestCell.getIndex() );
+					
+					IRLWall lNorthWall = lCell.getNorthWall();
+					if (lNorthWall != null) System.out.println(String.format("  North Wall: (%d,%d), (%d,%d)", lNorthWall.getInitialVerticeXCoordinate(), lNorthWall.getInitialVerticeYCoordinate(),lNorthWall.getFinalVerticeXCoordinate(), lNorthWall.getFinalVerticeYCoordinate() ));
+					
+					IRLWall lSouthWall = lCell.getSouthWall();
+					if (lSouthWall != null) System.out.println(String.format("  South Wall: (%d,%d), (%d,%d)", lSouthWall.getInitialVerticeXCoordinate(), lSouthWall.getInitialVerticeYCoordinate(),lSouthWall.getFinalVerticeXCoordinate(), lSouthWall.getFinalVerticeYCoordinate() ));
+					
+					IRLWall lEastWall  = lCell.getEastWall();
+					if (lEastWall != null) System.out.println(String.format("  East Wall: (%d,%d), (%d,%d)", lEastWall.getInitialVerticeXCoordinate(), lEastWall.getInitialVerticeYCoordinate(),lEastWall.getFinalVerticeXCoordinate(), lEastWall.getFinalVerticeYCoordinate() ));
+					
+					IRLWall lWestWall  = lCell.getWestWall();
+					if (lWestWall != null) System.out.println(String.format("  West Wall: (%d,%d), (%d,%d)", lWestWall.getInitialVerticeXCoordinate(), lWestWall.getInitialVerticeYCoordinate(),lWestWall.getFinalVerticeXCoordinate(), lWestWall.getFinalVerticeYCoordinate() ));
+					
+					System.out.println("\n\n");
 				}
 			}
 		});
