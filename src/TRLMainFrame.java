@@ -2,6 +2,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import javax.swing.Box;
 import javax.swing.JCheckBox;
@@ -138,8 +139,10 @@ public class TRLMainFrame extends JFrame {
 				
 				JTextField lGridWorldNameTextField = new JTextField(25); 
 				lGridWorldNameTextField.setText("");
-				JTextField lNumberOfRowsColumnsTextField = new JTextField(5); 
-				lNumberOfRowsColumnsTextField.setText("");
+				JTextField lNumberOfRowsTextField = new JTextField(5); 
+				lNumberOfRowsTextField.setText("");
+				JTextField lNumberOfColumnsTextField = new JTextField(5); 
+				lNumberOfColumnsTextField.setText("");
 
 				
 				JPanel lCreateGridWorldPanel = new JPanel();
@@ -147,18 +150,26 @@ public class TRLMainFrame extends JFrame {
 				lCreateGridWorldPanel.add(new JLabel("GridWorld Name:"));
 				lCreateGridWorldPanel.add(lGridWorldNameTextField);
 				
-				lCreateGridWorldPanel.add(new JLabel("Number of Rows/Columns:"));
-				lCreateGridWorldPanel.add(lNumberOfRowsColumnsTextField);
-				lNumberOfRowsColumnsTextField.setText(fNumberOfRows + "");
+				lCreateGridWorldPanel.add(new JLabel("Number of Rows:"));
+				lCreateGridWorldPanel.add(lNumberOfRowsTextField);
+				lNumberOfRowsTextField.setText(fNumberOfRows + "");
+				lCreateGridWorldPanel.add(new JLabel("Number of Columns:"));
+				lCreateGridWorldPanel.add(lNumberOfColumnsTextField);
+				lNumberOfColumnsTextField.setText(fNumberOfRows + "");
 				
 				int lResult = JOptionPane.showConfirmDialog(null, lCreateGridWorldPanel, "GridWorld information", JOptionPane.OK_CANCEL_OPTION);
 				if (lResult != JOptionPane.OK_OPTION) {
 					return;
 				}
+				
+				if( lGridWorldNameTextField.getText().trim().isEmpty() ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "GridWorld name cannot be empty.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
 
 				try{
-					fNumberOfRows = Integer.parseInt(lNumberOfRowsColumnsTextField.getText());
-					fNumberOfColumns = fNumberOfRows;
+					fNumberOfRows = Integer.parseInt(lNumberOfRowsTextField.getText());
+					fNumberOfColumns = Integer.parseInt(lNumberOfColumnsTextField.getText());
 				}
 				catch( NumberFormatException aNumberFormatException ) {
 					JOptionPane.showMessageDialog(TRLMainFrame.this, "Not a number.", "Error" ,JOptionPane.ERROR_MESSAGE);
@@ -166,7 +177,7 @@ public class TRLMainFrame extends JFrame {
 				}
 
 				// Create the grid first, then set its name and wire it to the UI.
-				fGrid = TRLGridUtil.getSharedInstance().createSquareGrid(fNumberOfRows);
+				fGrid = TRLGridUtil.getSharedInstance().createGrid(fNumberOfRows, fNumberOfColumns);
 				fGrid.setName(lGridWorldNameTextField.getText());
 				setTitle("GridWorld - " + fGrid.getName() + " - Inverse Reinforcement Learning");
 				fGridPanel.setGrid(fGrid);
@@ -405,6 +416,28 @@ public class TRLMainFrame extends JFrame {
 				
 				int lResult = JOptionPane.showConfirmDialog(null, lCreateWallPanel, "Wall information", JOptionPane.OK_CANCEL_OPTION);
 				if (lResult != JOptionPane.OK_OPTION) {
+					return;
+				}
+				
+				if( lInitialVerticeTextField.getText().trim().isEmpty() ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Initial vertice cannot be empty.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if( lFinalVerticeTextField.getText().trim().isEmpty() ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Final vertice cannot be empty.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				String lVerticeRegex = "^\\d+,\\d+$";
+				Pattern lPattern = Pattern.compile(lVerticeRegex);				
+				if ( !lPattern.matcher(lInitialVerticeTextField.getText()).matches()) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Initial vertice format is not valid. Use X,Y format. Where X and Y are non-negative integers.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if ( !lPattern.matcher(lFinalVerticeTextField.getText()).matches() ) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Final vertice format is not valid. Use X,Y format. Where X and Y are non-negative integers.", "Error" ,JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				

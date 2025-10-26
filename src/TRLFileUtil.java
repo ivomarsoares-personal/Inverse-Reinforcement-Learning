@@ -194,7 +194,7 @@ public class TRLFileUtil {
 				int lRows = lTokens.size() > 1 ? Integer.parseInt(lTokens.get(1)) : 0;
 				int lCols = lTokens.size() > 2 ? Integer.parseInt(lTokens.get(2)) : lRows;
 				
-				IRLGrid lGrid = TRLGridUtil.getSharedInstance().createSquareGrid(lRows);
+				IRLGrid lGrid = TRLGridUtil.getSharedInstance().createGrid(lRows, lCols);
 				lGrid.setName(lName);
 				
 				return lGrid;

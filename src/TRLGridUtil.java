@@ -37,27 +37,19 @@ public class TRLGridUtil {
 		return null;
 	}
 	
-	public IRLGrid createSquareGrid( int aNumberOfRows ) {
-		
+	public IRLGrid createSquareGrid( int aNumberOfRows ) {		
 		IRLGrid lSquareGrid = createGrid(aNumberOfRows, aNumberOfRows );
-		return lSquareGrid;
-		
+		return lSquareGrid;		
 	}
 	
 	
 	public IRLGrid createGrid( final int aNumberOfRows, final int aNumberOfColumns ){
 
-		assert aNumberOfRows == aNumberOfColumns;
-
-		if( aNumberOfRows != aNumberOfColumns ){
-			return null;
-		}
-
 		int lIndex = 0;
 
-		IRLGrid lRLSquareGrid = (IRLGrid) TRLFactory.createRLObject( IRL.sGRID );
-		lRLSquareGrid.setNumberOfRows(aNumberOfRows);
-		lRLSquareGrid.setNumberOfColumns(aNumberOfColumns);
+		IRLGrid lGrid = (IRLGrid) TRLFactory.createRLObject( IRL.sGRID );
+		lGrid.setNumberOfRows(aNumberOfRows);
+		lGrid.setNumberOfColumns(aNumberOfColumns);
 		
 		// Creating walls
 		
@@ -67,7 +59,7 @@ public class TRLGridUtil {
 		lNorthWall.setInitialVerticeYCoordinate(0);
 		lNorthWall.setFinalVerticeXCoordinate(aNumberOfColumns);
 		lNorthWall.setFinalVerticeYCoordinate(0);
-		lRLSquareGrid.getWallList().add(lNorthWall);
+		lGrid.getWallList().add(lNorthWall);
 		
 		// West wall
 		IRLWall lWestWall = (IRLWall) TRLFactory.createRLObject(IRLGridComponent.sWALL);
@@ -75,23 +67,23 @@ public class TRLGridUtil {
 		lWestWall.setInitialVerticeYCoordinate(0);
 		lWestWall.setFinalVerticeXCoordinate(0);
 		lWestWall.setFinalVerticeYCoordinate(aNumberOfRows);
-		lRLSquareGrid.getWallList().add(lWestWall);
+		lGrid.getWallList().add(lWestWall);
 
 		// South wall
 		IRLWall lSouthWall = (IRLWall) TRLFactory.createRLObject(IRLGridComponent.sWALL);
 		lSouthWall.setInitialVerticeXCoordinate(0);
 		lSouthWall.setInitialVerticeYCoordinate(aNumberOfRows);
-		lSouthWall.setFinalVerticeXCoordinate(aNumberOfRows);
-		lSouthWall.setFinalVerticeYCoordinate(aNumberOfColumns);
-		lRLSquareGrid.getWallList().add(lSouthWall);
+		lSouthWall.setFinalVerticeXCoordinate(aNumberOfColumns);
+		lSouthWall.setFinalVerticeYCoordinate(aNumberOfRows);
+		lGrid.getWallList().add(lSouthWall);
 		
 		// East wall
 		IRLWall lEastWall = (IRLWall) TRLFactory.createRLObject(IRLGridComponent.sWALL);
-		lEastWall.setInitialVerticeXCoordinate(aNumberOfRows);
+		lEastWall.setInitialVerticeXCoordinate(aNumberOfColumns);
 		lEastWall.setInitialVerticeYCoordinate(0);
-		lEastWall.setFinalVerticeXCoordinate(aNumberOfRows);
-		lEastWall.setFinalVerticeYCoordinate(aNumberOfColumns);
-		lRLSquareGrid.getWallList().add(lEastWall);
+		lEastWall.setFinalVerticeXCoordinate(aNumberOfColumns);
+		lEastWall.setFinalVerticeYCoordinate(aNumberOfRows);
+		lGrid.getWallList().add(lEastWall);
 		
 		// Creating cells
 		for( int lRowIndex = 0; lRowIndex < aNumberOfRows; lRowIndex++ ){			
@@ -104,7 +96,7 @@ public class TRLGridUtil {
 				lCell.setIndex(lIndex);
 				lIndex++;
 
-				lRLSquareGrid.getCellList().add(lCell);
+				lGrid.getCellList().add(lCell);
 
 				// Setting walls
 
@@ -130,19 +122,19 @@ public class TRLGridUtil {
 			}						
 		}	
 		
-		List<IRLCell> lCellList = lRLSquareGrid.getCellList();
+		List<IRLCell> lCellList = lGrid.getCellList();
 		
 		for( int lCellIndex = 0; lCellIndex < lCellList.size(); lCellIndex++ ){
 			final IRLCell lCell = lCellList.get(lCellIndex);
 			
 			// Setting neighbors				
-			lCell.setNorthCell(retrieveCell(lCell.getRowIndex()-1, lCell.getColumnIndex(),   lRLSquareGrid));
-			lCell.setEastCell(retrieveCell( lCell.getRowIndex(),   lCell.getColumnIndex()+1, lRLSquareGrid));
-			lCell.setSouthCell(retrieveCell(lCell.getRowIndex()+1, lCell.getColumnIndex(),   lRLSquareGrid));
-			lCell.setWestCell(retrieveCell( lCell.getRowIndex(),   lCell.getColumnIndex()-1, lRLSquareGrid));
+			lCell.setNorthCell(retrieveCell(lCell.getRowIndex()-1, lCell.getColumnIndex(),   lGrid));
+			lCell.setEastCell(retrieveCell( lCell.getRowIndex(),   lCell.getColumnIndex()+1, lGrid));
+			lCell.setSouthCell(retrieveCell(lCell.getRowIndex()+1, lCell.getColumnIndex(),   lGrid));
+			lCell.setWestCell(retrieveCell( lCell.getRowIndex(),   lCell.getColumnIndex()-1, lGrid));
 		}
 		
 
-		return lRLSquareGrid;		
+		return lGrid;		
 	}
 }
