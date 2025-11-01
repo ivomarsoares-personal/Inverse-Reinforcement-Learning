@@ -502,13 +502,18 @@ public class TRLMainFrame extends JFrame {
 				lRewardAtNonAbsorbingStateTextField.setText(0 + "");
 				JTextField lRewardAtAbsorbingStateTextField = new JTextField(5);
 				lRewardAtAbsorbingStateTextField.setText(1 + "");
+				JTextField lStateRewardListTextField = new JTextField(25);
+				
 
 				JPanel lCreateAgentPanel = new JPanel();
 				lCreateAgentPanel.add(new JLabel("Reward at non absorbing states:"));
 				lCreateAgentPanel.add(lRewardAtNonAbsorbingStateTextField);
-				lCreateAgentPanel.add(Box.createHorizontalStrut(15)); // a spacer
+				//lCreateAgentPanel.add(Box.createHorizontalStrut(15)); // a spacer
 				lCreateAgentPanel.add(new JLabel("Reward at absorbing state:"));
 				lCreateAgentPanel.add(lRewardAtAbsorbingStateTextField);
+				lCreateAgentPanel.add(new JLabel("State Reward List:"));
+				lCreateAgentPanel.add(lStateRewardListTextField); // a spacer
+				
 
 				int lResult = JOptionPane.showConfirmDialog(null, lCreateAgentPanel, "Reward Function", JOptionPane.OK_CANCEL_OPTION);
 				if (lResult != JOptionPane.OK_OPTION) {
@@ -525,7 +530,51 @@ public class TRLMainFrame extends JFrame {
 					return;
 				}
 				
-				IRLRewardFunction lRewardFunction = TRLRewardFunctionUtil.getSharedInstance().createRewardFunction(fAgent, lRewardAtNonAbsorbingStates, lRewardAtAbsorbingState);
+				String lStateRewardListString = lStateRewardListTextField.getText().trim();
+				
+				IRLRewardFunction lRewardFunction = null;
+				
+				if(!lStateRewardListString.isEmpty() ){
+					String lRegex = "^\\d+:(?:\\d+(?:\\.\\d+)?)(?:,\\d+:(?:\\d+(?:\\.\\d+)?))*$";
+					Pattern lPattern = Pattern.compile(lRegex);
+					
+					if ( !lPattern.matcher(lStateRewardListString).matches()) {						
+						JOptionPane.showMessageDialog(TRLMainFrame.this, "State Reward list is not valid. Use S0:R0,S1,R1:S2:R2,... format. Where S0:R0 is the reward at state 0 and so on.", "Error" ,JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					
+					String[] lStateRewardListSplit = lStateRewardListString.split(",");
+					if (lStateRewardListSplit.length != fGrid.getCellList().size()) {
+						JOptionPane.showMessageDialog(TRLMainFrame.this, "State Reward list must have exactly " + fGrid.getCellList().size() + " entries.", "Error" ,JOptionPane.ERROR_MESSAGE);
+						return;
+					}		
+					
+					int[] lStateIndices = new int[lStateRewardListSplit.length];
+					int lIndex = 0;
+					for (String lStateRewardEntry : lStateRewardListSplit) {
+						String[] lParts = lStateRewardEntry.split(":");
+						int lStateIndex = Integer.parseInt(lParts[0]);
+						lStateIndices[lIndex++] = lStateIndex;
+						if( lStateIndex < 0 || lStateIndex >= fGrid.getCellList().size() ) {
+							JOptionPane.showMessageDialog(TRLMainFrame.this, "State index " + lStateIndex + " is out of bounds. It must be greater or equal than 0 and lower than " + fGrid.getCellList().size() + ".", "Error" ,JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+					}
+					
+					List<IRLState> lStateList = fAgent.getStateList();
+					for (int i = 0; i < lStateIndices.length; i++) {
+						IRLState lState = lStateList.get(i);
+						if( lState.getIndex() != lStateIndices[i] ) {
+							JOptionPane.showMessageDialog(TRLMainFrame.this, "State indices in the State Reward list must be in order and without repetitions.", "Error" ,JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+					}					
+					
+					lRewardFunction = TRLRewardFunctionUtil.getSharedInstance().createRewardFunction(fAgent, lStateRewardListString);			
+				}
+				else {
+					lRewardFunction = TRLRewardFunctionUtil.getSharedInstance().createRewardFunction(fAgent, lRewardAtNonAbsorbingStates, lRewardAtAbsorbingState);
+				}
 				fGrid.setRewardFunction(lRewardFunction);
 				
 			}
