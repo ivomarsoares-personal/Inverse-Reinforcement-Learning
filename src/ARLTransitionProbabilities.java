@@ -100,7 +100,6 @@ public abstract class ARLTransitionProbabilities implements IRLTransitionProbabi
 					}
 				}
 
-				//System.out.println( "TP[" + lTPRowIndex + "," + lTPColumnIndex + "] = " + lProbability );
 				lTransitionProbabilitiesMatrix.setEntry(lTPRowIndex, lTPColumnIndex, lProbability);
 			}
 		}
