@@ -18,10 +18,9 @@ public class TRLPolicyUtil {
 	private static final TRLPolicyUtil sSharedInstance = new TRLPolicyUtil();
 	public static TRLPolicyUtil getSharedInstance(){
 		return sSharedInstance;
-	}	
+	}    
 	private TRLPolicyUtil(){}
-
-		
+       
 	public IRLPolicy createPolicyForGivenOptimalValueFunction( final IRLAgent aAgent, final double[] aOptimalValueFunction ){
 
 		IRLPolicy lPolicy = (IRLPolicy) TRLFactory.createRLObject(IRLObject.sPOLICY);
@@ -71,8 +70,8 @@ public class TRLPolicyUtil {
 
 		return lPolicy;
 	}
-	
-	public RealMatrix retrieveTPMatrix(	IRLAction  aAction,	RealMatrix aTPActionNorthMatrix, RealMatrix aTPActionEastMatrix, RealMatrix aTPActionSouthMatrix,	RealMatrix aTPActionWestMatrix){
+    
+	public RealMatrix retrieveTPMatrix(    IRLAction  aAction,    RealMatrix aTPActionNorthMatrix, RealMatrix aTPActionEastMatrix, RealMatrix aTPActionSouthMatrix,    RealMatrix aTPActionWestMatrix){
 		
 		if( aAction instanceof TRLActionMoveNorth ){
 			return aTPActionNorthMatrix;
@@ -90,7 +89,7 @@ public class TRLPolicyUtil {
 		assert false;
 		return null;
 	}
-	
+    
 	public double[] solveValueIterationAssynchronously( final IRLAgent aAgent ) {
 		
 		
@@ -115,8 +114,7 @@ public class TRLPolicyUtil {
 			for( int lInitialTPStateIndex = 0; lInitialTPStateIndex < lNumberOfStates; lInitialTPStateIndex++ ){
 
 				IRLState lInitialTPState = lStateList.get(lInitialTPStateIndex);
-				List<IRLAction> lActionList = lInitialTPState.getActionList();
-							
+				List<IRLAction> lActionList = lInitialTPState.getActionList();		
 
 				double lMaxIterativeValue = Double.MIN_VALUE;
 
@@ -127,8 +125,7 @@ public class TRLPolicyUtil {
 
 					for( int lActionIndex = 0; lActionIndex < lActionList.size(); lActionIndex++ ){
 						IRLAction lActionOnInitialTPState = lActionList.get(lActionIndex);
-						RealMatrix lTransitionProbabilitiesMatrix = retrieveTPMatrix(lActionOnInitialTPState, lTPNorthMatrix, lTPEastMatrix, lTPSouthMatrix, lTPWestMatrix);
-
+						RealMatrix lTransitionProbabilitiesMatrix = retrieveTPMatrix(lActionOnInitialTPState, lTPNorthMatrix, lTPEastMatrix, lTPSouthMatrix, lTPWestMatrix);					
 						double lIterativeValue = 0;
 
 						for( int lDestinationTPStateIndex = 0; lDestinationTPStateIndex < lNumberOfStates; lDestinationTPStateIndex++ ){
@@ -138,7 +135,6 @@ public class TRLPolicyUtil {
 						if( lIterativeValue > lMaxIterativeValue ){
 							lMaxIterativeValue = lIterativeValue;
 						}
-
 					}
 				}
 
@@ -149,12 +145,11 @@ public class TRLPolicyUtil {
 			
 			lIndex++;
 		}
-		
 				
 		return lValueFunction;
 	}
-	
-	
+    
+    
 	public double[] solveBellmansEquationsForStateValueFunction( final IRLAgent aAgent){
 
 		IRLGrid lGrid = aAgent.getGrid();
@@ -195,8 +190,8 @@ public class TRLPolicyUtil {
 				else if( lInitialState.getCell().getIndex() == lCoefficientIndex ) {
 					// Absorbing state.
 					assert lInitialState.getAbsorbing();
-					lLinearEquationCoefficients[lStateActionPairIndex][lCoefficientIndex] = 1;					
-				}				
+					lLinearEquationCoefficients[lStateActionPairIndex][lCoefficientIndex] = 1;								
+				}                
 			}
 		}
 
@@ -212,7 +207,7 @@ public class TRLPolicyUtil {
 		return lSolution.toArray();
 	}
 	
-	public HashMap<IRLState, HashMap<IRLAction, Double>> solveBellmansEquationsForActionValueFunction( 	final IRLAgent aAgent,	final double[] aValueFunction ){
+	public HashMap<IRLState, HashMap<IRLAction, Double>> solveBellmansEquationsForActionValueFunction(     final IRLAgent aAgent,    final double[] aValueFunction ){
 
 		RealMatrix lTPNorthMatrix = aAgent.getTPMatrixNorth();
 		RealMatrix lTPEastMatrix  = aAgent.getTPMatrixEast();
@@ -227,6 +222,8 @@ public class TRLPolicyUtil {
 		for( int lStateIndex = 0; lStateIndex < lStateList.size(); lStateIndex++ ){
 
 			final IRLState lInitialState = lStateList.get(lStateIndex);
+			
+			//System.out.println("Solving for state index: " + lStateIndex);
 
 			HashMap<IRLAction, Double> lActionValueFunctionHashMap = new HashMap<IRLAction, Double>();
 
@@ -236,6 +233,7 @@ public class TRLPolicyUtil {
 			for( int lActionIndex = 0; lActionIndex < lActionList.size(); lActionIndex++ ){
 				IRLAction lAction = lActionList.get(lActionIndex);
 
+				//System.out.println("  Solving for action index: " + lActionIndex);
 
 				Double lQvalue = lRewardFunctionAsArray[lStateIndex];
 
@@ -244,6 +242,7 @@ public class TRLPolicyUtil {
 
 					double lStateTransitionProbability = lTransitionProbabilitiesMatrix.getEntry(lStateIndex, lCoefficientIndex);
 					lQvalue += aAgent.getDiscountingFactor() * lStateTransitionProbability * aValueFunction[lCoefficientIndex];
+					//System.out.println("Qvalue: " + lQvalue + " StateTransitionProbability: " + lStateTransitionProbability + " aValueFunction[lCoefficientIndex]: " + aValueFunction[lCoefficientIndex]);
 				}
 
 				lActionValueFunctionHashMap.put(lAction, lQvalue);
@@ -253,5 +252,5 @@ public class TRLPolicyUtil {
 
 		return lStateActionValueFunctionHashMap;
 	}
-	
+    
 }

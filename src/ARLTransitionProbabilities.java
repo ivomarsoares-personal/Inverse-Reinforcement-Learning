@@ -16,6 +16,7 @@ public abstract class ARLTransitionProbabilities implements IRLTransitionProbabi
 	protected abstract boolean getAgentStaysAtTheSameCellWithWallAtDirectionOfAction(IRLCell aOriginCell);
 	protected abstract boolean getDestinationCellIsNeighborInTheDirectionOfAction(IRLCell aOriginCell, IRLCell aDestinationCell);
 	protected abstract boolean getDestinationCellIsNeighborNotInTheDirectionOfAction(IRLCell aOriginCell, IRLCell aDestinationCell);
+	protected abstract boolean isThereAWallBetweenCells(IRLCell aOriginCell, IRLCell aDestinationCell);
 
 	public RealMatrix createTransitionProbabilitiesForAction( 
 			final double aCorrectActionProbability, 
@@ -50,7 +51,7 @@ public abstract class ARLTransitionProbabilities implements IRLTransitionProbabi
 
 				final IRLCell lDestinationCell = TRLGridUtil.getSharedInstance().retrieveCell(lTPColumnIndex, lGrid);
 
-//				// Absorbing state
+				// Absorbing state
 				if( aAgent.getAbsorbingState().getCell() == lOriginCell  ){
 					
 					if( lOriginCell == lDestinationCell ){
@@ -81,8 +82,8 @@ public abstract class ARLTransitionProbabilities implements IRLTransitionProbabi
 						lProbability = aActionNoiseProbability * 0.25;
 					}
 				}
-				// Destination cell is not a neighbor of origin cell.
-				else if( ! lOriginCell.isNeighboor(lDestinationCell) ){
+				// Destination cell is not a neighbor of origin cell or there is a wall between the two cells.
+				else if( ! lOriginCell.isNeighboor(lDestinationCell) || isThereAWallBetweenCells(lOriginCell, lDestinationCell )){
 					lProbability = 0;
 				}
 
@@ -99,6 +100,7 @@ public abstract class ARLTransitionProbabilities implements IRLTransitionProbabi
 					}
 				}
 
+				//System.out.println( "TP[" + lTPRowIndex + "," + lTPColumnIndex + "] = " + lProbability );
 				lTransitionProbabilitiesMatrix.setEntry(lTPRowIndex, lTPColumnIndex, lProbability);
 			}
 		}

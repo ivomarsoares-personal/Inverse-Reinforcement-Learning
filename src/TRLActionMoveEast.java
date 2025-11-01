@@ -7,7 +7,5 @@ public class TRLActionMoveEast extends ARLAction {
 	public String toString() {
 		return IRL.sACTION_MOVE_EAST;
 	}
-
-	
 	
 }

@@ -30,4 +30,9 @@ public class TRLTransitionProbabilitiesActionMoveNorth extends ARLTransitionProb
 	protected boolean getAgentStaysAtTheSameCellWithTwoSurroudingWallsWithoutWallAtDirectionOfAction(	IRLCell aOriginCell) {
 		return aOriginCell.getNorthWall() == null && aOriginCell.getWallCount() == 2;
 	}
+	
+	@Override
+	protected boolean isThereAWallBetweenCells(IRLCell aOriginCell, IRLCell aDestinationCell) {
+		return aOriginCell.getNorthWall() != null && aDestinationCell == aOriginCell.getNorthCell();
+	}
 }
