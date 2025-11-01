@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -63,6 +64,7 @@ public class TRLFileUtil {
 		saveGridToFile(aGrid, lTargetFolder);
 		saveWallsToFile(aGrid, lTargetFolder);
 		saveAgentsToFile(aGrid, lTargetFolder);
+		saveRewardFunctionToFile(aGrid, lTargetFolder);
 		
 		return lResult;
 	}
@@ -116,6 +118,52 @@ public class TRLFileUtil {
 			}
 		}
 	}
+	
+	private void saveRewardFunctionToFile(final IRLGrid aGrid, final File aDirectory) throws IOException {
+		File lOut = new File(aDirectory, "reward_function.csv");
+		try ( PrintWriter lPrintWriter = new PrintWriter(new BufferedWriter(new FileWriter(lOut))) ){
+			// Header
+			lPrintWriter.println("StateId,Reward");
+			IRLRewardFunction lRF = aGrid.getRewardFunction();
+			if( lRF == null ) return;
+			java.util.HashMap<IRLState, Double> lMap = lRF.getStateRewardHashMap();
+			// Determine number of states: prefer grid cell list size, else infer from reward map
+			int lNumStates = 0;
+			if( aGrid.getCellList() != null ){
+				lNumStates = aGrid.getCellList().size();
+			}
+			if( lNumStates == 0 && lMap != null ){ // fallback: find max index in map
+				int lMax = -1;
+				for( Entry<IRLState, Double> lEntry : lMap.entrySet() ){
+					IRLState s = lEntry.getKey();
+					if( s != null && s.getIndex() != null ){
+						if( s.getIndex() > lMax ) lMax = s.getIndex();
+					}
+				}
+				if( lMax >= 0 ) lNumStates = lMax + 1;
+			}
+			if( lNumStates <= 0 ) return; // nothing to write beyond header
+			// Prepare rewards array indexed by state index
+			double[] lRewards = new double[lNumStates];
+			// default values are 0.0
+			if( lMap != null ){
+				for( Entry<IRLState, Double> lEntry : lMap.entrySet() ){
+					IRLState lState = lEntry.getKey();
+					Double lReward = lEntry.getValue();
+					if( lState != null && lState.getIndex() != null ){
+						int idx = lState.getIndex();
+						if( idx >= 0 && idx < lRewards.length ){
+							lRewards[idx] = lReward == null ? 0.0d : lReward.doubleValue();
+						}
+					}
+				}
+			}
+			// Write rows in order 0..N-1
+			for( int i = 0; i < lRewards.length; i++ ){
+				lPrintWriter.println(String.format("%d,%f", i, lRewards[i]));
+			}
+		}
+	}
 
 	private String escapeCsv(final String aString){
 		if( aString == null ) return "";
@@ -147,9 +195,11 @@ public class TRLFileUtil {
 		File lGridFile = new File(lSelectedFolder, "grid.csv");
 		File lWallsFile = new File(lSelectedFolder, "walls.csv");
 		File lAgentsFile = new File(lSelectedFolder, "agents.csv");
+		File lRewardFunctionFile = new File(lSelectedFolder, "reward_function.csv");
 		if( !lGridFile.exists() ) lMissing.add("grid.csv");
 		if( !lWallsFile.exists() ) lMissing.add("walls.csv");
 		if( !lAgentsFile.exists() ) lMissing.add("agents.csv");
+		if( !lRewardFunctionFile.exists() ) lMissing.add("reward_function.csv");
 		if( !lMissing.isEmpty() ){
 			StringBuilder lMsg = new StringBuilder();
 			lMsg.append("Missing files: ");
@@ -168,6 +218,7 @@ public class TRLFileUtil {
 			if( lGrid == null ) return null;
 			loadWalls(lGrid);
 			loadAgents(lGrid);
+			loadRewardFunction(lGrid);
 			return lGrid;
 		}
 		catch(Exception e){
@@ -267,6 +318,75 @@ public class TRLFileUtil {
 		}
 	}
 
+	private void loadRewardFunction(IRLGrid aGrid) {
+		File lRewardFile = new File(fLoadedFolder, "reward_function.csv");
+		if( !lRewardFile.exists() ){
+			return;
+		}
+		
+		try ( BufferedReader lReader = new BufferedReader(new FileReader(lRewardFile)) ){
+			String lHeader = lReader.readLine(); // header
+			if( lHeader == null ) return;
+			// Build index -> IRLState map using available agents' state lists (use first matching state for each index)
+			java.util.HashMap<Integer, IRLState> lIndexToState = new java.util.HashMap<Integer, IRLState>();
+			List<IRLAgent> lAgents = aGrid.getAgentList();
+			if( lAgents != null ){
+				for( IRLAgent lAgent : lAgents ){
+					if( lAgent == null ) continue;
+					List<IRLState> lStateList = lAgent.getStateList();
+					if( lStateList == null ) continue;
+					for( IRLState lState : lStateList ){
+						if( lState == null ) continue;
+						Integer idx = lState.getIndex();
+						if( idx == null ) continue;
+						if( !lIndexToState.containsKey(idx) ){
+							lIndexToState.put(idx, lState);
+						}
+					}
+				}
+			}
+
+			java.util.HashMap<IRLState, Double> lStateRewardHashMap = new java.util.HashMap<IRLState, Double>();
+			String lLine = null;
+			int lLineNumber = 1; // header already consumed
+			while( (lLine = lReader.readLine()) != null ){
+				lLineNumber++;
+				if( lLine.trim().isEmpty() ) continue;
+				List<String> lTokens = parseCsvLine(lLine);
+				if( lTokens.size() < 2 ){
+					// ignore malformed lines
+					continue;
+				}
+				String lStateIdStr = lTokens.get(0).trim();
+				String lRewardStr = lTokens.get(1).trim();
+				try{
+					int lStateIndex = Integer.parseInt(lStateIdStr);
+					double lReward = Double.parseDouble(lRewardStr);
+					IRLState lState = lIndexToState.get(lStateIndex);
+					if( lState != null ){
+						lStateRewardHashMap.put(lState, lReward);
+					}
+					// if no matching state found, ignore the reward entry
+				}
+				catch(NumberFormatException aNumberFormatException){
+					// skip invalid numeric values
+					continue;
+				}
+			}
+
+			if( !lStateRewardHashMap.isEmpty() ){
+				IRLRewardFunction lRF = TRLRewardFunctionUtil.getSharedInstance().createRewardFunction(lStateRewardHashMap);
+				aGrid.setRewardFunction(lRF);
+			}
+			
+		}
+		catch(Exception e){
+			JOptionPane.showMessageDialog(null, "Error reading reward_function.csv: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		}
+	}
+	
+	
 	/**
 	 * Very small CSV parser that handles quoted values (double quotes doubled inside) and commas.
 	 */

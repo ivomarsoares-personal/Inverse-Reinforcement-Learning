@@ -36,4 +36,11 @@ public class TRLRewardFunctionUtil {
 	}
 	
 	
+	public IRLRewardFunction createRewardFunction(final HashMap<IRLState, Double> aStateRewardHashMap) {
+		
+		IRLRewardFunction lRewardFunction = (IRLRewardFunction) TRLFactory.createRLObject(IRLObject.sREWARD_FUNCTION);
+		lRewardFunction.setStateRewardHashMap(aStateRewardHashMap);
+		return lRewardFunction;
+	}
+	
 }
