@@ -549,14 +549,26 @@ public class TRLMainFrame extends JFrame {
 						return;
 					}		
 					
+					int[] lStateIndices = new int[lStateRewardListSplit.length];
+					int lIndex = 0;
 					for (String lStateRewardEntry : lStateRewardListSplit) {
 						String[] lParts = lStateRewardEntry.split(":");
 						int lStateIndex = Integer.parseInt(lParts[0]);
+						lStateIndices[lIndex++] = lStateIndex;
 						if( lStateIndex < 0 || lStateIndex >= fGrid.getCellList().size() ) {
 							JOptionPane.showMessageDialog(TRLMainFrame.this, "State index " + lStateIndex + " is out of bounds. It must be greater or equal than 0 and lower than " + fGrid.getCellList().size() + ".", "Error" ,JOptionPane.ERROR_MESSAGE);
 							return;
 						}
 					}
+					
+					List<IRLState> lStateList = fAgent.getStateList();
+					for (int i = 0; i < lStateIndices.length; i++) {
+						IRLState lState = lStateList.get(i);
+						if( lState.getIndex() != lStateIndices[i] ) {
+							JOptionPane.showMessageDialog(TRLMainFrame.this, "State indices in the State Reward list must be in order and without repetitions.", "Error" ,JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+					}					
 					
 					lRewardFunction = TRLRewardFunctionUtil.getSharedInstance().createRewardFunction(fAgent, lStateRewardListString);			
 				}
