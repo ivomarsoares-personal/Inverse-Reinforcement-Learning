@@ -542,7 +542,7 @@ public class TRLMainFrame extends JFrame {
 					return;
 				}
 				
-				double[] lOptimalValueFunction = TRLPolicyUtil.getSharedInstance().solveValueIterationAssynchronously(fAgent );
+				double[] lOptimalValueFunction = TRLPolicyUtil.getSharedInstance().solveValueIterationAssynchronously(fAgent);
 				IRLPolicy lOptimalPolicy = TRLPolicyUtil.getSharedInstance().createPolicyForGivenOptimalValueFunction(fAgent, lOptimalValueFunction);
 				lOptimalPolicy.setValueFunction(lOptimalValueFunction);
 				

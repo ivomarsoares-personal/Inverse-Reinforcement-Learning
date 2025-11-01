@@ -32,4 +32,9 @@ public class TRLTransitionProbabilitiesActionMoveEast extends ARLTransitionProba
 		return aOriginCell.getEastWall() == null && aOriginCell.getWallCount() == 2;
 	}
 	
+	@Override
+	protected boolean isThereAWallBetweenCells(IRLCell aOriginCell, IRLCell aDestinationCell) {
+		return aOriginCell.getEastWall() != null && aDestinationCell == aOriginCell.getEastCell();
+	}
+	
 }
