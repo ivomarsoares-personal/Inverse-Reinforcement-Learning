@@ -208,6 +208,12 @@ public class TRLMainFrame extends JFrame {
 					JOptionPane.showMessageDialog(TRLMainFrame.this, "Create agent first.", "Error" ,JOptionPane.ERROR_MESSAGE);
 					return;
 				}
+				
+				if( fGrid.getRewardFunction() == null ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Create reward function first.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
 				try{
 					int lResult = TRLFileUtil.getSharedInstance().saveToFolder(fGrid);
 					if ( lResult == JFileChooser.APPROVE_OPTION ){
@@ -520,7 +526,7 @@ public class TRLMainFrame extends JFrame {
 				}
 				
 				IRLRewardFunction lRewardFunction = TRLRewardFunctionUtil.getSharedInstance().createRewardFunction(fAgent, lRewardAtNonAbsorbingStates, lRewardAtAbsorbingState);
-				fAgent.getGrid().setRewardFunction(lRewardFunction);
+				fGrid.setRewardFunction(lRewardFunction);
 				
 			}
 		});

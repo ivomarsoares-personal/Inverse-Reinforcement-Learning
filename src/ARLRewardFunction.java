@@ -29,6 +29,9 @@ public abstract class ARLRewardFunction implements IRLRewardFunction {
 		return fStateRewardHashMap;
 	}
 
+	public void setStateRewardHashMap(HashMap<IRLState, Double> aStateRewardHashMap) {
+		fStateRewardHashMap = aStateRewardHashMap;
+	}
 	
 	
 }
