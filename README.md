@@ -88,17 +88,18 @@ Run class TRLMain.java or execute the JAR file: java -jar TRLMain-1.0.0.jar.
 
 ```
 Gridworld-Reinforcement-Learning
-├── bin                  # The compiled .class files
-├── images               # Images used in the README.md file
-├── INSTRUCTIONS.md      # Instructions on how to package and run the JAR corresponding to this tool
-├── lib                  # All the external libs necessary to run this project  
-├── LICENSE              # MIT License File
-├── MANIFEST.MF          # MANIFEST to generate jar file from the command line
-├── README.md            # This Readme
-├── releases             # The JAR files corresponding to the different releases
-├── shortcuts.txt        # Some useful shortcuts when coding with eclipse IDE
-├── SourceCode.md        # Documentation of the project generated with agent mode
-└── src                  # The source .java files
+├── bin                   # The compiled .class files
+├── images                # Images used in the README.md file
+├── INSTRUCTIONS.md       # Instructions on how to package and run the JAR corresponding to this tool
+├── lib                   # All the external libs necessary to run this project  
+├── LICENSE               # MIT License File
+├── MANIFEST.MF           # MANIFEST to generate jar file from the command line
+├── README.md             # This Readme
+├── releases              # The JAR files corresponding to the different releases
+├── run_latest_release.sh # Bash script to run the latest release
+├── shortcuts.txt         # Some useful shortcuts when coding with eclipse IDE
+├── SourceCode.md         # Documentation of the project generated with agent mode
+└── src                   # The source .java files
 ```
 
 # 🤝 Contributing
