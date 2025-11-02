@@ -41,8 +41,10 @@ This repo implements the following algorithms in a Java application with a GUI:
 
 It allows you define any gridworld environment similar to what you find in [[**2**](#References)] at _Section 5. IRL from Sampled Trajectories_. It allows you to define the received reward by the agent when it switches to the absorbing (goal) state of the grid as well as the reward received by the agent when it switches to a non-absorbing statte. You can define the following parameters of the IRL algorithm: RMax, Min and Max Lambada and Lambada Step. It will then output the predicted reward function as highlighted in the IRL algorithm. See section below _Step-by-step Guide_ on how to run this tool.
 
+<p align="center">
 ![rl](https://user-images.githubusercontent.com/33180566/32406065-176535da-c150-11e7-8a9b-107518775755.jpg)</br >
 [Reinforcement Learning book](#References)
+</p>
 
 # 📖 Gridworld Algorithms Implemented
 
