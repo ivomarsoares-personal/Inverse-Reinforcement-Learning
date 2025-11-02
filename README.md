@@ -42,7 +42,6 @@ It allows you define any gridworld environment similar to what you find in [[**2
 
 <p align="center">
 <img src="https://user-images.githubusercontent.com/33180566/32406065-176535da-c150-11e7-8a9b-107518775755.jpg" alt="Reinforcement Learning Book Cover">
-Reinforcement Learning book
 </p>
 
 # 📖 Gridworld Algorithms Implemented
