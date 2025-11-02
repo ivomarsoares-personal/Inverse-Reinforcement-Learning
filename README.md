@@ -93,10 +93,10 @@ Contributions are welcome! Feel free to:
 1. Implement the following Temporal Difference (TD) algorithms:
   * [Q-Learning](https://en.wikipedia.org/wiki/Q-learning)
   * [Sarsa](https://en.wikipedia.org/wiki/State%E2%80%93action%E2%80%93reward%E2%80%93state%E2%80%93action)
-1. Implement the following [exploration strategies](http://incompleteideas.net/book/the-book-2nd.html):
+2. Implement the following [exploration strategies](http://incompleteideas.net/book/the-book-2nd.html):
   * ε-greedy (epsilon-greedy)
   * Softmax
-1. Put support to [Multi-Agent Systems (MAS)](https://ai.vub.ac.be/wp-content/uploads/2019/12/Sparse-Interactions-in-Multi-Agent-Reinforcement-Learning.pdf)
+3. Put support to [Multi-Agent Systems (MAS)](https://ai.vub.ac.be/wp-content/uploads/2019/12/Sparse-Interactions-in-Multi-Agent-Reinforcement-Learning.pdf)
 
 # 📝 License
 
