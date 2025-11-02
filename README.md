@@ -19,12 +19,15 @@
       <a href="#-step-by-step-guide">Step by Step Guide</a>
     </li>
     <li>
-      <a href="#-contributing">Contributing</a>
-    </li>
-    <li>
       <a href="#-references">References</a>
     </li>
     <li>
+      <a href="#-project-structure">Project Structure</a>
+    </li>
+    <li>
+      <a href="#-contributing">Contributing</a>
+    </li>
+    <li>      
       <a href="#-next-steps">Next Steps</a>
     </li>
     <li>
@@ -75,6 +78,29 @@ Run class TRLMain.java or execute the JAR file: java -jar TRLMain-1.0.0.jar.
 ![irl8](https://user-images.githubusercontent.com/33180566/32405973-478f4b4e-c14e-11e7-9e6f-8e72dafbbe4f.JPG)</br>
 ![irl7](https://user-images.githubusercontent.com/33180566/32405236-3e895fa2-c140-11e7-9dce-d7e0eae00fe1.PNG)</br >
 
+# 📚 References
+
+[**1**] [Reinforcement Learning: An Introduction](http://incompleteideas.net/book/the-book-2nd.html), Richard S. Sutton and Andrew G. Barto.</br >
+[**2**] [Algorithms for Inverse Reinforcement Learning](http://ai.stanford.edu/~ang/papers/icml00-irl.pdf). AY Ng, SJ Russell - Icml, 2000 - ai.stanford.edu.</br >
+[**3**] [Sparse Interactions in Multi-Agent Reinforcement Learning](https://ai.vub.ac.be/wp-content/uploads/2019/12/Sparse-Interactions-in-Multi-Agent-Reinforcement-Learning.pdf). Yann-Michaël De Hauwere, PhD Thesis, VUB, 2011.
+
+## 📁 Project Structure
+
+```
+Gridworld-Reinforcement-Learning
+├── bin                  # The compiled .class files
+├── images               # Images used in the README.md file
+├── INSTRUCTIONS.md      # Instructions on how to package and run the JAR corresponding to this tool
+├── lib                  # All the external libs necessary to run this project  
+├── LICENSE              # MIT License File
+├── MANIFEST.MF          # MANIFEST to generate jar file from the command line
+├── README.md            # This Readme
+├── releases             # The JAR files corresponding to the different releases
+├── shortcuts.txt        # Some useful shortcuts when coding with eclipse IDE
+├── SourceCode.md        # Documentation of the project generated with agent mode
+└── src                  # The source .java files
+```
+
 # 🤝 Contributing
 
 Contributions are welcome! Feel free to:
@@ -84,12 +110,6 @@ Contributions are welcome! Feel free to:
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
-
-# 📚 References
-
-[**1**] [Reinforcement Learning: An Introduction](http://incompleteideas.net/book/the-book-2nd.html), Richard S. Sutton and Andrew G. Barto.</br >
-[**2**] [Algorithms for Inverse Reinforcement Learning](http://ai.stanford.edu/~ang/papers/icml00-irl.pdf). AY Ng, SJ Russell - Icml, 2000 - ai.stanford.edu.</br >
-[**3**] [Sparse Interactions in Multi-Agent Reinforcement Learning](https://ai.vub.ac.be/wp-content/uploads/2019/12/Sparse-Interactions-in-Multi-Agent-Reinforcement-Learning.pdf). Yann-Michaël De Hauwere, PhD Thesis, VUB, 2011.
 
 # 📖 Next Steps
 
