@@ -96,7 +96,7 @@ Contributions are welcome! Feel free to:
 2. Implement the following [exploration strategies](http://incompleteideas.net/book/the-book-2nd.html):
   * ε-greedy (epsilon-greedy)
   * Softmax
-3. Put support to [Multi-Agent Systems (MAS)](https://ai.vub.ac.be/wp-content/uploads/2019/12/Sparse-Interactions-in-Multi-Agent-Reinforcement-Learning.pdf)
+3. Put support to [Multi-Agent Systems (MAS)](https://ai.vub.ac.be/wp-content/uploads/2019/12/Sparse-Interactions-in-Multi-Agent-Reinforcement-Learning.pdf).
 
 # 📝 License
 
