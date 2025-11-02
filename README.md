@@ -1,4 +1,4 @@
-<h1>🌟 Algorithms for Inverse Reinforcement Learning</h1>
+<h1>🌟 GridWorld - Reinforcement Learning</h1>
 
 ![GitHub contributors](https://img.shields.io/github/contributors/ivomarb/Inverse-Reinforcement-Learning?color=ffcc66&style=for-the-badge)
 ![GitHub stars](https://img.shields.io/github/stars/ivomarb/Inverse-Reinforcement-Learning?color=ffcc66&style=for-the-badge)
