@@ -19,10 +19,13 @@
       <a href="#-step-by-step-guide">Step by Step Guide</a>
     </li>
     <li>
+      <a href="#-contributing">Contributing</a>
+    </li>
+    <li>
       <a href="#-references">References</a>
     </li>
     <li>
-      <a href="#-contributing">Contributing</a>
+      <a href="#-next-steps">Next Steps</a>
     </li>
     <li>
       <a href="#-license">License</a>
