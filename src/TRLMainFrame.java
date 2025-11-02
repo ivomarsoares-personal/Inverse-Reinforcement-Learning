@@ -592,8 +592,13 @@ public class TRLMainFrame extends JFrame {
 					return;
 				}
 				
-				if( fAgent.getGrid().getRewardFunction() == null ){
+				if( fGrid.getRewardFunction() == null ){
 					JOptionPane.showMessageDialog(TRLMainFrame.this, "Create reward function first.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if ( fGrid.getWallList().size() > 4 ) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Cant perform value iteration in a gridworld with inner walls.", "Error" ,JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				
@@ -632,6 +637,11 @@ public class TRLMainFrame extends JFrame {
 				
 				if( lPolicy.getValueFunction() == null ){
 					JOptionPane.showMessageDialog(TRLMainFrame.this, "Run value iteration first.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if ( fGrid.getWallList().size() > 4 ) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Cant perform IRL in a gridworld with inner walls.", "Error" ,JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				
