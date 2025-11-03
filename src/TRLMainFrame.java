@@ -629,17 +629,7 @@ public class TRLMainFrame extends JFrame {
 					return;
 				}
 				
-				IRLPolicy lPolicy = fAgent.getPolicy();
-				if( lPolicy == null ){
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "Run value iteration first.", "Error" ,JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				
-				if( lPolicy.getValueFunction() == null ){
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "Run value iteration first.", "Error" ,JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				
+			
 				if ( fGrid.getWallList().size() > 4 ) {
 					JOptionPane.showMessageDialog(TRLMainFrame.this, "Cant perform IRL in a gridworld with inner walls.", "Error" ,JOptionPane.ERROR_MESSAGE);
 					return;
@@ -674,6 +664,18 @@ public class TRLMainFrame extends JFrame {
 					return;
 				}
 				
+				
+				// Running Value Iteration before
+				double[] lOptimalValueFunction = TRLPolicyUtil.getSharedInstance().solveValueIterationAssynchronously(fAgent);
+				IRLPolicy lOptimalPolicy = TRLPolicyUtil.getSharedInstance().createPolicyForGivenOptimalValueFunction(fAgent, lOptimalValueFunction);
+				lOptimalPolicy.setValueFunction(lOptimalValueFunction);
+				
+				HashMap<IRLState, HashMap<IRLAction, Double>> lActionValueFunctionHashMap = TRLPolicyUtil.getSharedInstance().solveBellmansEquationsForActionValueFunction(fAgent, lOptimalPolicy.getValueFunction());
+				lOptimalPolicy.setQValueHashMap(lActionValueFunctionHashMap);
+				
+				fAgent.setPolicy(lOptimalPolicy);
+				
+				// Running now IRL
 				double lLambda = 0;
 				double lMinLambda = 0;
 				double lMaxLambda = 0;
