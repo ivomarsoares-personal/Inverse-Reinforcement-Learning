@@ -112,7 +112,7 @@ Contributions are welcome! Feel free to:
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-# 📖 Next Steps
+# 🚀 Next Steps
 
 1. Implement the following Temporal Difference (TD) algorithms:
   * [Q-Learning](https://en.wikipedia.org/wiki/Q-learning)
