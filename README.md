@@ -121,6 +121,7 @@ Contributions are welcome! Feel free to:
   * ε-greedy (epsilon-greedy)
   * Softmax
 3. Put support for [Multi-Agent Systems (MAS)](https://ai.vub.ac.be/wp-content/uploads/2019/12/Sparse-Interactions-in-Multi-Agent-Reinforcement-Learning.pdf).
+4. Add a [CartPole scenario](https://arxiv.org/abs/2006.04938): a continuous space, discrete actions setting.
 
 # 📝 License
 
