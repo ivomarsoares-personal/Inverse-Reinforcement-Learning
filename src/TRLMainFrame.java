@@ -602,15 +602,7 @@ public class TRLMainFrame extends JFrame {
 					return;
 				}
 				
-				double[] lOptimalValueFunction = TRLPolicyUtil.getSharedInstance().solveValueIterationAssynchronously(fAgent);
-				IRLPolicy lOptimalPolicy = TRLPolicyUtil.getSharedInstance().createPolicyForGivenOptimalValueFunction(fAgent, lOptimalValueFunction);
-				lOptimalPolicy.setValueFunction(lOptimalValueFunction);
-				
-				HashMap<IRLState, HashMap<IRLAction, Double>> lActionValueFunctionHashMap = TRLPolicyUtil.getSharedInstance().solveBellmansEquationsForActionValueFunction(fAgent, lOptimalPolicy.getValueFunction());
-				lOptimalPolicy.setQValueHashMap(lActionValueFunctionHashMap);
-				
-				fAgent.setPolicy(lOptimalPolicy);
-			
+				executeValueIteration();		
 			}
 		});
 		
@@ -666,14 +658,8 @@ public class TRLMainFrame extends JFrame {
 				
 				
 				// Running Value Iteration before
-				double[] lOptimalValueFunction = TRLPolicyUtil.getSharedInstance().solveValueIterationAssynchronously(fAgent);
-				IRLPolicy lOptimalPolicy = TRLPolicyUtil.getSharedInstance().createPolicyForGivenOptimalValueFunction(fAgent, lOptimalValueFunction);
-				lOptimalPolicy.setValueFunction(lOptimalValueFunction);
+				executeValueIteration() ;
 				
-				HashMap<IRLState, HashMap<IRLAction, Double>> lActionValueFunctionHashMap = TRLPolicyUtil.getSharedInstance().solveBellmansEquationsForActionValueFunction(fAgent, lOptimalPolicy.getValueFunction());
-				lOptimalPolicy.setQValueHashMap(lActionValueFunctionHashMap);
-				
-				fAgent.setPolicy(lOptimalPolicy);
 				
 				// Running now IRL
 				double lLambda = 0;
@@ -845,4 +831,14 @@ public class TRLMainFrame extends JFrame {
 			}
 		});
 	}
-}
+	
+	private void executeValueIteration() {
+		double[] lOptimalValueFunction = TRLPolicyUtil.getSharedInstance().solveValueIterationAssynchronously(fAgent);
+		IRLPolicy lOptimalPolicy = TRLPolicyUtil.getSharedInstance().createPolicyForGivenOptimalValueFunction(fAgent, lOptimalValueFunction);
+		lOptimalPolicy.setValueFunction(lOptimalValueFunction);
+		
+		HashMap<IRLState, HashMap<IRLAction, Double>> lActionValueFunctionHashMap = TRLPolicyUtil.getSharedInstance().solveBellmansEquationsForActionValueFunction(fAgent, lOptimalPolicy.getValueFunction());
+		lOptimalPolicy.setQValueHashMap(lActionValueFunctionHashMap);
+		
+		fAgent.setPolicy(lOptimalPolicy);	
+	}}
