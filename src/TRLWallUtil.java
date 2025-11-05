@@ -118,10 +118,14 @@ public class TRLWallUtil {
 	public void removeWall(IRLGrid aGrid, final int aInitialVerticeXCoordinate, final int aInitialVerticeYCoordinate, final int aFinalVerticeXCoordinate, final int  aFinalVerticeYCoordinate) {
 		IRLWall lWallToRemove = null;
 		for( IRLWall lWall : aGrid.getWallList() ){
-			if( lWall.getInitialVerticeXCoordinate() == aInitialVerticeXCoordinate &&
-				lWall.getInitialVerticeYCoordinate() == aInitialVerticeYCoordinate &&
-				lWall.getFinalVerticeXCoordinate()   == aFinalVerticeXCoordinate &&
-				lWall.getFinalVerticeYCoordinate()   == aFinalVerticeYCoordinate ){
+			if((     lWall.getInitialVerticeXCoordinate() == aInitialVerticeXCoordinate &&
+					 lWall.getInitialVerticeYCoordinate() == aInitialVerticeYCoordinate &&
+					 lWall.getFinalVerticeXCoordinate()   == aFinalVerticeXCoordinate   &&
+					 lWall.getFinalVerticeYCoordinate()   == aFinalVerticeYCoordinate      ) || 
+					(lWall.getInitialVerticeXCoordinate() == aFinalVerticeXCoordinate &&
+					 lWall.getInitialVerticeYCoordinate() == aFinalVerticeYCoordinate &&
+					 lWall.getFinalVerticeXCoordinate()   == aInitialVerticeXCoordinate   &&
+					 lWall.getFinalVerticeYCoordinate()   == aInitialVerticeYCoordinate)){
 					lWallToRemove = lWall;
 					break;
 			}
@@ -160,10 +164,14 @@ public class TRLWallUtil {
 	 */
 	public boolean wallExists(final IRLGrid aGrid, final int aInitialVerticeXCoordinate, final int aInitialVerticeYCoordinate, final int aFinalVerticeXCoordinate, final int  aFinalVerticeYCoordinate) {
 		for( IRLWall lWall : aGrid.getWallList() ){
-			if( lWall.getInitialVerticeXCoordinate() == aInitialVerticeXCoordinate &&
-				lWall.getInitialVerticeYCoordinate() == aInitialVerticeYCoordinate &&
-				lWall.getFinalVerticeXCoordinate()   == aFinalVerticeXCoordinate &&
-				lWall.getFinalVerticeYCoordinate()   == aFinalVerticeYCoordinate ){
+			if(( lWall.getInitialVerticeXCoordinate() == aInitialVerticeXCoordinate &&
+				 lWall.getInitialVerticeYCoordinate() == aInitialVerticeYCoordinate &&
+				 lWall.getFinalVerticeXCoordinate()   == aFinalVerticeXCoordinate   &&
+				 lWall.getFinalVerticeYCoordinate()   == aFinalVerticeYCoordinate      ) || 
+				(lWall.getInitialVerticeXCoordinate() == aFinalVerticeXCoordinate &&
+				 lWall.getInitialVerticeYCoordinate() == aFinalVerticeYCoordinate &&
+				 lWall.getFinalVerticeXCoordinate()   == aInitialVerticeXCoordinate   &&
+				 lWall.getFinalVerticeYCoordinate()   == aInitialVerticeYCoordinate)){
 					return true;
 			}
 		}

@@ -428,7 +428,7 @@ public class TRLMainFrame extends JFrame {
 				JTextField lInitialVerticeTextField = new JTextField(5);
 				JTextField lFinalVerticeTextField = new JTextField(5);
 				
-				if (!wallInputValidations(lInitialVerticeTextField, lFinalVerticeTextField) ) {
+				if (!wallInputValidations("add", lInitialVerticeTextField, lFinalVerticeTextField) ) {
 					return;
 				}
 				
@@ -468,7 +468,7 @@ public class TRLMainFrame extends JFrame {
 				JTextField lInitialVerticeTextField = new JTextField(5);
 				JTextField lFinalVerticeTextField = new JTextField(5);
 								
-				if (!wallInputValidations(lInitialVerticeTextField, lFinalVerticeTextField) ) {
+				if (!wallInputValidations("remove", lInitialVerticeTextField, lFinalVerticeTextField) ) {
 					return;
 				}
 				
@@ -859,14 +859,22 @@ public class TRLMainFrame extends JFrame {
 		});
 	}
 	
-	private boolean wallInputValidations(JTextField aInitialVerticeTextField, JTextField aFinalVerticeTextField) {
+	/**
+	 * Perform some validations to verify if the wall input data is valid.
+	 * 
+	 * @param action
+	 * @param aInitialVerticeTextField
+	 * @param aFinalVerticeTextField
+	 * @return
+	 */
+	private boolean wallInputValidations(final String action, final JTextField aInitialVerticeTextField, final JTextField aFinalVerticeTextField) {
 		JPanel lCreateWallPanel = new JPanel();
 		lCreateWallPanel.add(new JLabel("Initial Vertice: "));
 		lCreateWallPanel.add(aInitialVerticeTextField);
 		lCreateWallPanel.add(new JLabel("Final Vertice:"));
 		lCreateWallPanel.add(aFinalVerticeTextField);
 		
-		int lResult = JOptionPane.showConfirmDialog(null, lCreateWallPanel, "Wall to add information", JOptionPane.OK_CANCEL_OPTION);
+		int lResult = JOptionPane.showConfirmDialog(null, lCreateWallPanel, "Wall to " + action + " information", JOptionPane.OK_CANCEL_OPTION);
 		if (lResult != JOptionPane.OK_OPTION) {
 			return false;
 		}
