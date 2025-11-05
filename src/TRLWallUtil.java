@@ -1,3 +1,6 @@
+/**
+ * TRLWallUtil.java: Utility class for constructing, removing and querying grid walls.
+ */
 public class TRLWallUtil {
 
 	private static final TRLWallUtil sSharedInstance = new TRLWallUtil();
@@ -16,7 +19,17 @@ public class TRLWallUtil {
 		return createWall(aGrid, lInitialVerticeXCoordinate, lInitialVerticeYCoordinate, lFinalVerticeXCoordinate, lFinalVerticeYCoordinate);
 	}
 	
-	public IRLWall createWall(IRLGrid aGrid, int aInitialVerticeXCoordinate, int aInitialVerticeYCoordinate, int aFinalVerticeXCoordinate, int  aFinalVerticeYCoordinate) {
+	/**
+	 * Creates a wall in the grid given its vertices coordinates. It sets the Cell references accordingly.
+	 * 
+	 * @param aGrid
+	 * @param aInitialVerticeXCoordinate
+	 * @param aInitialVerticeYCoordinate
+	 * @param aFinalVerticeXCoordinate
+	 * @param aFinalVerticeYCoordinate
+	 * @return
+	 */
+	public IRLWall createWall(IRLGrid aGrid, final int aInitialVerticeXCoordinate, final int aInitialVerticeYCoordinate, final int aFinalVerticeXCoordinate, final int  aFinalVerticeYCoordinate) {
 		IRLWall lWall = (IRLWall) TRLFactory.createRLObject(IRLGridComponent.sWALL);
 		lWall.setInitialVerticeXCoordinate(aInitialVerticeXCoordinate);
 		lWall.setInitialVerticeYCoordinate(aInitialVerticeYCoordinate);
@@ -92,6 +105,71 @@ public class TRLWallUtil {
 
 		return lWall;
 	}
+	/**
+	 * Removes a wall from the grid given its vertices coordinates.
+	 * 
+	 * @param aGrid 
+	 * @param aInitialVerticeXCoordinate 
+	 * @param aInitialVerticeYCoordinate
+	 * @param aFinalVerticeXCoordinate
+	 * @param aFinalVerticeYCoordinate
+	 * @return
+	 */
+	public void removeWall(IRLGrid aGrid, final int aInitialVerticeXCoordinate, final int aInitialVerticeYCoordinate, final int aFinalVerticeXCoordinate, final int  aFinalVerticeYCoordinate) {
+		IRLWall lWallToRemove = null;
+		for( IRLWall lWall : aGrid.getWallList() ){
+			if( lWall.getInitialVerticeXCoordinate() == aInitialVerticeXCoordinate &&
+				lWall.getInitialVerticeYCoordinate() == aInitialVerticeYCoordinate &&
+				lWall.getFinalVerticeXCoordinate()   == aFinalVerticeXCoordinate &&
+				lWall.getFinalVerticeYCoordinate()   == aFinalVerticeYCoordinate ){
+					lWallToRemove = lWall;
+					break;
+			}
+		}
+		
+		if( lWallToRemove != null ){
+			// Remove references from adjacent cells
+			for( IRLCell lCell : lWallToRemove.getNorthCellsList() ){
+				lCell.setSouthWall( null );
+			}
+			for( IRLCell lCell : lWallToRemove.getSouthCellsList() ){
+				lCell.setNorthWall( null );
+			}
+			for( IRLCell lCell : lWallToRemove.getEastCellsList() ){
+				lCell.setWestWall( null );
+			}
+			for( IRLCell lCell : lWallToRemove.getWestCellsList() ){
+				lCell.setEastWall( null );
+			}
+			
+			// Remove wall from grid
+			aGrid.getWallList().remove( lWallToRemove );
+		}
+	}
+		
+	
+	/**
+	 * Checks if a wall given its initial and final coordinates exists in the grid.
+	 *  
+	 * @param aGrid
+	 * @param aInitialVerticeXCoordinate
+	 * @param aInitialVerticeYCoordinate
+	 * @param aFinalVerticeXCoordinate
+	 * @param aFinalVerticeYCoordinate
+	 * @return
+	 */
+	public boolean wallExists(final IRLGrid aGrid, final int aInitialVerticeXCoordinate, final int aInitialVerticeYCoordinate, final int aFinalVerticeXCoordinate, final int  aFinalVerticeYCoordinate) {
+		for( IRLWall lWall : aGrid.getWallList() ){
+			if( lWall.getInitialVerticeXCoordinate() == aInitialVerticeXCoordinate &&
+				lWall.getInitialVerticeYCoordinate() == aInitialVerticeYCoordinate &&
+				lWall.getFinalVerticeXCoordinate()   == aFinalVerticeXCoordinate &&
+				lWall.getFinalVerticeYCoordinate()   == aFinalVerticeYCoordinate ){
+					return true;
+			}
+		}
+		
+		return false;
+	}
 	
 	public int getVerticeXCoordinate( final String aVertice ){		
 		String[] lComponents = aVertice.split(",");
@@ -110,5 +188,6 @@ public class TRLWallUtil {
 	public boolean isVerticalWall(final int aInitialVerticeXCoordinate, final int aFinalVerticeXCoordinate ) {
 		return aInitialVerticeXCoordinate == aFinalVerticeXCoordinate;
 	}
+	
 	
 }

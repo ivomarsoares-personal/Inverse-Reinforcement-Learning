@@ -65,11 +65,16 @@ public class TRLMainFrame extends JFrame {
 		lFileMenu.add(lExitMenuItem);
 
 		JMenu lGridMenu = new JMenu("Create");
-		JMenuItem lCreateWallMenuItem = new JMenuItem("Wall");
+		JMenu lCreateWallMenu = new JMenu("Wall");
+		JMenuItem lAddWallMenuItem = new JMenuItem("Add");
+		JMenuItem lRemoveWallMenuItem = new JMenuItem("Remove");
+		lCreateWallMenu.add(lAddWallMenuItem);
+		lCreateWallMenu.add(lRemoveWallMenuItem);
+		
 		JMenuItem lCreateAgentMenuItem = new JMenuItem("Agent");		
 		JMenuItem lCreateRewardFunctionMenuItem = new JMenuItem("Reward Function");
-		lGridMenu.add(lCreateWallMenuItem);
-		lCreateWallMenuItem.setEnabled(true);
+		lGridMenu.add(lCreateWallMenu);
+		lCreateWallMenu.setEnabled(true);
 		lGridMenu.add(lCreateAgentMenuItem);
 		lGridMenu.add(lCreateRewardFunctionMenuItem);
 		
@@ -410,7 +415,7 @@ public class TRLMainFrame extends JFrame {
 		});
 		
 		
-		lCreateWallMenuItem.addActionListener(new ActionListener() {
+		lAddWallMenuItem.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent aActionEvent) {
@@ -421,38 +426,9 @@ public class TRLMainFrame extends JFrame {
 				}
 				
 				JTextField lInitialVerticeTextField = new JTextField(5);
-				JTextField lFinalVerticeTextField = new JTextField(5);				
+				JTextField lFinalVerticeTextField = new JTextField(5);
 				
-				JPanel lCreateWallPanel = new JPanel();
-				lCreateWallPanel.add(new JLabel("Initial Vertice: "));
-				lCreateWallPanel.add(lInitialVerticeTextField);
-				lCreateWallPanel.add(new JLabel("Final Vertice:"));
-				lCreateWallPanel.add(lFinalVerticeTextField);
-				
-				int lResult = JOptionPane.showConfirmDialog(null, lCreateWallPanel, "Wall information", JOptionPane.OK_CANCEL_OPTION);
-				if (lResult != JOptionPane.OK_OPTION) {
-					return;
-				}
-				
-				if( lInitialVerticeTextField.getText().trim().isEmpty() ){
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "Initial vertice cannot be empty.", "Error" ,JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				
-				if( lFinalVerticeTextField.getText().trim().isEmpty() ){
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "Final vertice cannot be empty.", "Error" ,JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				
-				String lVerticeRegex = "^\\d+,\\d+$";
-				Pattern lPattern = Pattern.compile(lVerticeRegex);				
-				if ( !lPattern.matcher(lInitialVerticeTextField.getText()).matches()) {
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "Initial vertice format is not valid. Use X,Y format. Where X and Y are non-negative integers.", "Error" ,JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				
-				if ( !lPattern.matcher(lFinalVerticeTextField.getText()).matches() ) {
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "Final vertice format is not valid. Use X,Y format. Where X and Y are non-negative integers.", "Error" ,JOptionPane.ERROR_MESSAGE);
+				if (!wallInputValidations(lInitialVerticeTextField, lFinalVerticeTextField) ) {
 					return;
 				}
 				
@@ -461,30 +437,81 @@ public class TRLMainFrame extends JFrame {
 				int lFinalVerticeXCoordinate   = TRLWallUtil.getSharedInstance().getVerticeXCoordinate( lFinalVerticeTextField.getText() );
 				int lFinalVerticeYCoordinate   = TRLWallUtil.getSharedInstance().getVerticeYCoordinate( lFinalVerticeTextField.getText() );
 				
-				if( lInitialVerticeXCoordinate != lFinalVerticeXCoordinate && lInitialVerticeYCoordinate != lFinalVerticeYCoordinate ){
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "Only horizontal and vertical walls are allowed.", "Error", JOptionPane.ERROR_MESSAGE);
-					return;
+				if( TRLWallUtil.getSharedInstance().wallExists(fGrid, lInitialVerticeXCoordinate, lInitialVerticeYCoordinate, lFinalVerticeXCoordinate, lFinalVerticeYCoordinate)) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Wall with these coordinates already exists.", "Error" ,JOptionPane.ERROR_MESSAGE);
 				}
 				
-				if( lInitialVerticeXCoordinate < 0 || lFinalVerticeXCoordinate < 0 || lInitialVerticeYCoordinate < 0 || lFinalVerticeYCoordinate < 0) {
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "Vertices coordinates cannot be smaller than 0.", "Error", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
 				
-				if( lFinalVerticeXCoordinate > fNumberOfColumns ) {
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "The final vertice X coordinate " + lFinalVerticeXCoordinate + " cannot be greater than the number of columns of the grid " + fNumberOfColumns + "." , "Error", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				
-				if( lFinalVerticeYCoordinate > fNumberOfRows ) {
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "The final vertice Y coordinate " + lFinalVerticeYCoordinate + " cannot be greater than the number of rows of the grid " + fNumberOfRows + "." , "Error", JOptionPane.ERROR_MESSAGE);
-					return;
-				}			
-				
+			
 				TRLWallUtil.getSharedInstance().createWall(fGrid, lInitialVerticeTextField.getText(), lFinalVerticeTextField.getText());
 				fGridPanel.repaint();
 			}			
 		});
+		
+		
+		lRemoveWallMenuItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent aActionEvent) {
+				
+				if( fGrid == null ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Create grid first.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if( fGrid.getWallList().size() == 4 ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "No inner walls to remove.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+			
+				
+				JTextField lInitialVerticeTextField = new JTextField(5);
+				JTextField lFinalVerticeTextField = new JTextField(5);
+								
+				if (!wallInputValidations(lInitialVerticeTextField, lFinalVerticeTextField) ) {
+					return;
+				}
+				
+				int lInitialVerticeXCoordinate = TRLWallUtil.getSharedInstance().getVerticeXCoordinate( lInitialVerticeTextField.getText() );
+				int lInitialVerticeYCoordinate = TRLWallUtil.getSharedInstance().getVerticeYCoordinate( lInitialVerticeTextField.getText() );
+				int lFinalVerticeXCoordinate   = TRLWallUtil.getSharedInstance().getVerticeXCoordinate( lFinalVerticeTextField.getText() );
+				int lFinalVerticeYCoordinate   = TRLWallUtil.getSharedInstance().getVerticeYCoordinate( lFinalVerticeTextField.getText() );
+				
+				if (lInitialVerticeXCoordinate == 0 && lInitialVerticeYCoordinate == 0 &&
+					lFinalVerticeXCoordinate == fGrid.getNumberOfColumns() && lFinalVerticeYCoordinate == 0 ) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Cannot remove outer north wall.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if (lInitialVerticeXCoordinate == 0 && lInitialVerticeYCoordinate == 0 &&
+					lFinalVerticeXCoordinate == 0 && lFinalVerticeYCoordinate == fGrid.getNumberOfRows() ) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Cannot remove outer west wall.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if (lInitialVerticeXCoordinate == fGrid.getNumberOfColumns() && lInitialVerticeYCoordinate == 0 &&
+					lFinalVerticeXCoordinate == fGrid.getNumberOfColumns() && lFinalVerticeYCoordinate == fGrid.getNumberOfRows() ) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Cannot remove outer east wall.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if (lInitialVerticeXCoordinate == 0 && lInitialVerticeYCoordinate == fGrid.getNumberOfRows() &&
+					lFinalVerticeXCoordinate == fGrid.getNumberOfColumns() && lFinalVerticeYCoordinate == fGrid.getNumberOfRows() ) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Cannot remove outer south wall.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if(!TRLWallUtil.getSharedInstance().wallExists(fGrid, lInitialVerticeXCoordinate, lInitialVerticeYCoordinate, lFinalVerticeXCoordinate, lFinalVerticeYCoordinate)) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Inner wall not found.", "Error" ,JOptionPane.ERROR_MESSAGE);
+				}
+				
+				
+				
+				TRLWallUtil.getSharedInstance().removeWall(fGrid, lInitialVerticeXCoordinate, lInitialVerticeYCoordinate, lFinalVerticeXCoordinate, lFinalVerticeYCoordinate);
+				fGridPanel.repaint();
+			}			
+		});
+
 		
 		
 		
@@ -830,6 +857,67 @@ public class TRLMainFrame extends JFrame {
 				JOptionPane.showMessageDialog(TRLMainFrame.this, "Ivomar Brito Soares, ivomarbsoares@gmail.com", "Gridworld" ,JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
+	}
+	
+	private boolean wallInputValidations(JTextField aInitialVerticeTextField, JTextField aFinalVerticeTextField) {
+		JPanel lCreateWallPanel = new JPanel();
+		lCreateWallPanel.add(new JLabel("Initial Vertice: "));
+		lCreateWallPanel.add(aInitialVerticeTextField);
+		lCreateWallPanel.add(new JLabel("Final Vertice:"));
+		lCreateWallPanel.add(aFinalVerticeTextField);
+		
+		int lResult = JOptionPane.showConfirmDialog(null, lCreateWallPanel, "Wall to add information", JOptionPane.OK_CANCEL_OPTION);
+		if (lResult != JOptionPane.OK_OPTION) {
+			return false;
+		}
+		
+		if( aInitialVerticeTextField.getText().trim().isEmpty() ){
+			JOptionPane.showMessageDialog(TRLMainFrame.this, "Initial vertice cannot be empty.", "Error" ,JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		if( aFinalVerticeTextField.getText().trim().isEmpty() ){
+			JOptionPane.showMessageDialog(TRLMainFrame.this, "Final vertice cannot be empty.", "Error" ,JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		String lVerticeRegex = "^\\d+,\\d+$";
+		Pattern lPattern = Pattern.compile(lVerticeRegex);				
+		if ( !lPattern.matcher(aInitialVerticeTextField.getText()).matches()) {
+			JOptionPane.showMessageDialog(TRLMainFrame.this, "Initial vertice format is not valid. Use X,Y format. Where X and Y are non-negative integers.", "Error" ,JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		if ( !lPattern.matcher(aFinalVerticeTextField.getText()).matches() ) {
+			JOptionPane.showMessageDialog(TRLMainFrame.this, "Final vertice format is not valid. Use X,Y format. Where X and Y are non-negative integers.", "Error" ,JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		int lInitialVerticeXCoordinate = TRLWallUtil.getSharedInstance().getVerticeXCoordinate( aInitialVerticeTextField.getText() );
+		int lInitialVerticeYCoordinate = TRLWallUtil.getSharedInstance().getVerticeYCoordinate( aInitialVerticeTextField.getText() );
+		int lFinalVerticeXCoordinate   = TRLWallUtil.getSharedInstance().getVerticeXCoordinate( aFinalVerticeTextField.getText() );
+		int lFinalVerticeYCoordinate   = TRLWallUtil.getSharedInstance().getVerticeYCoordinate( aFinalVerticeTextField.getText() );
+		
+		if( lInitialVerticeXCoordinate != lFinalVerticeXCoordinate && lInitialVerticeYCoordinate != lFinalVerticeYCoordinate ){
+			JOptionPane.showMessageDialog(TRLMainFrame.this, "Only horizontal and vertical walls are allowed.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		if( lInitialVerticeXCoordinate < 0 || lFinalVerticeXCoordinate < 0 || lInitialVerticeYCoordinate < 0 || lFinalVerticeYCoordinate < 0) {
+			JOptionPane.showMessageDialog(TRLMainFrame.this, "Vertices coordinates cannot be smaller than 0.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		if( lFinalVerticeXCoordinate > fNumberOfColumns ) {
+			JOptionPane.showMessageDialog(TRLMainFrame.this, "The final vertice X coordinate " + lFinalVerticeXCoordinate + " cannot be greater than the number of columns of the grid " + fNumberOfColumns + "." , "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		if( lFinalVerticeYCoordinate > fNumberOfRows ) {
+			JOptionPane.showMessageDialog(TRLMainFrame.this, "The final vertice Y coordinate " + lFinalVerticeYCoordinate + " cannot be greater than the number of rows of the grid " + fNumberOfRows + "." , "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}			
+		return true;
 	}
 	
 	private void executeValueIteration() {
