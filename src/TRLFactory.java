@@ -43,6 +43,12 @@ public class TRLFactory {
 	      else if(aRLObjectType.equalsIgnoreCase(IRLObject.sREWARD_FUNCTION ) ){
 	    	  return new TRLRewardFunction();
 	      }
+	      else if(aRLObjectType.equalsIgnoreCase(IRLObject.sMODEL_BASED_VALUE_ITERATION ) ){
+	    	  return new TRLValueIteration();
+	      }
+	      else if(aRLObjectType.equalsIgnoreCase(IRLObject.sINVERSE_REINFORCEMENT_LEARNING ) ){
+	    	  return new TRLInverseReinforcementLearning();
+	      }
 	      else {
 	    	  assert false;	    	  
 	      }

@@ -18,5 +18,6 @@ public interface IRLObject {
 	public static String sPOLICY            = "POLICY";
 	public static String sREWARD_FUNCTION   = "REWARD_FUNCTION";
 	public static String sMODEL_BASED_VALUE_ITERATION = "MODEL_BASED_VALUE_ITERATION";
+	public static String sINVERSE_REINFORCEMENT_LEARNING = "INVERSE_REINFORCEMENT_LEARNING";
 	
 }

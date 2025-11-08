@@ -23,14 +23,28 @@ import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
  * solves the linear programming problem (Ng & Russell style) using Apache
  * Commons Math linear and optimization utilities.
  */
-public class TRLIRLUtil {
+public class TRLInverseReinforcementLearningUtil {
 
-	private static final TRLIRLUtil sSharedInstance = new TRLIRLUtil();
-	public static TRLIRLUtil getSharedInstance(){
+	private static final TRLInverseReinforcementLearningUtil sSharedInstance = new TRLInverseReinforcementLearningUtil();
+	public static TRLInverseReinforcementLearningUtil getSharedInstance(){
 		return sSharedInstance;
 	}	
-	private TRLIRLUtil(){}
+	private TRLInverseReinforcementLearningUtil(){}
 
+	public IRLInverseReinforcementLearning createIRL( final IRLAgent aAgent, final double aDiscountingFactor, final double aCorrectActionProbability, final double aActionNoiseProbability, final double aStepLambda, final double aMinLambda, final double aMaxLambda, final double aRMax ){	
+		
+		IRLInverseReinforcementLearning lIRL = (IRLInverseReinforcementLearning) TRLFactory.createRLObject(IRLObject.sINVERSE_REINFORCEMENT_LEARNING);
+		lIRL.setDiscountingFactor(aDiscountingFactor);
+		lIRL.setCorrectActionProbability(aCorrectActionProbability);
+		lIRL.setActionNoiseProbability(aActionNoiseProbability);
+		lIRL.setStepLambda(aStepLambda);
+		lIRL.setMinLambda(aMinLambda);
+		lIRL.setMaxLambda(aMaxLambda);
+		lIRL.setRMax(aRMax);
+	
+		return lIRL;
+	}
+	
 
 	public double[] solveIRL( final IRLAgent aAgent, final double aRMax, final double aRegularization ) {
 
@@ -39,7 +53,7 @@ public class TRLIRLUtil {
 		RealMatrix lTPEastMatrix  = aAgent.getTPMatrixEast();
 		RealMatrix lTPSouthMatrix = aAgent.getTPMatrixSouth();
 		RealMatrix lTPWestMatrix  = aAgent.getTPMatrixWest();
-		Double lDiscountingFactor = aAgent.getDiscountingFactor();
+		Double lDiscountingFactor = aAgent.getInverseReinforcementLearning().getDiscountingFactor();
 
 
 		HashMap<IRLState, HashMap<IRLAction, Double>> lActionValueFunctionHashMap = aAgent.getPolicy().getQValueHashMap();
@@ -113,7 +127,6 @@ public class TRLIRLUtil {
 			for( int lRowIndex = 0; lRowIndex < lNumberOfStates; lRowIndex++ ){
 				double[] lConstraint = lObjectiveComponentMatrix.getRow(lPolicyInitialState.getIndex());
 				lObjectiveVector[lRowIndex] += lObjectiveVector[lRowIndex] + lConstraint[lRowIndex] - aRegularization;
-				//			lConstraints.add(new LinearConstraint(lConstraint,  Relationship.GEQ, 0.0));
 			}			
 		}
 

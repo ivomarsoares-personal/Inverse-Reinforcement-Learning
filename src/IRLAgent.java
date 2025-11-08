@@ -17,6 +17,9 @@ public interface IRLAgent extends IRL {
 	public IRLModelBased getModelBased();
 	public void setModelBased(IRLModelBased aModelBased);
 	
+	public IRLInverseReinforcementLearning getInverseReinforcementLearning();
+	public void setInverseReinforcementLearning(IRLInverseReinforcementLearning aInverseReinforcementLearning);
+	
 	public java.util.List<IRLState> getStateList();
 	public IRLState retrieveState( final int aIndex );
 	public IRLState retrieveState( final int aRowIndex, final int aColumnIndex );
