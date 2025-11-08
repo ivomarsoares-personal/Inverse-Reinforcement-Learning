@@ -47,6 +47,9 @@ public class TRLMainFrame extends JFrame {
 	private int fNumberOfRows = 5;
 	private int fNumberOfColumns = 5;
 	private boolean fInverseReinforcementLearningDisplayAllGraphsIsSelected;
+	private boolean fValueIterationParametersSet = false;
+	private boolean fInverseReinforcementLearningParametersSet = false;
+	
 
 	public TRLMainFrame( ){
 
@@ -673,7 +676,8 @@ public class TRLMainFrame extends JFrame {
 				
 				IRLValueIteration lValueIteration = TRLModelBasedUtil.getSharedInstance().createValueIteration(lDiscountingFactor, lCorrectActionProbability, lActionNoiseProbability);
 				fAgent.setModelBased(lValueIteration);				
-				TRLModelBasedUtil.getSharedInstance().createTransitionProbabilities(fAgent, lCorrectActionProbability, lActionNoiseProbability);				
+				TRLModelBasedUtil.getSharedInstance().createTransitionProbabilities(fAgent, lCorrectActionProbability, lActionNoiseProbability);	
+				fValueIterationParametersSet = true;
 			}
 		});
 		
@@ -790,6 +794,7 @@ public class TRLMainFrame extends JFrame {
 				IRLInverseReinforcementLearning lIRL = TRLInverseReinforcementLearningUtil.getSharedInstance().createIRL(fAgent, lDiscountingFactor, lCorrectActionProbability, lActionNoiseProbability, lStepLambda, lMinLambda, lMaxLambda, lRMax);
 				fAgent.setInverseReinforcementLearning(lIRL);
 				fInverseReinforcementLearningDisplayAllGraphsIsSelected = lDisplayAllGraphsCheckBox.isSelected();
+				fInverseReinforcementLearningParametersSet = true;
 				
 			}
 		});
@@ -893,10 +898,18 @@ public class TRLMainFrame extends JFrame {
 			        	if(lSolutionMethod.equals("Model Based") ) {			        		
 			        		String lModelBased = (String) lModelBasedMethodsComboBox.getSelectedItem();			        		
 			        		if (lModelBased.equals("Value Iteration")){
+			        			if( ! fValueIterationParametersSet ){
+			        				JOptionPane.showMessageDialog(TRLMainFrame.this, "Set Value Iteration parameters first.", "Error" ,JOptionPane.ERROR_MESSAGE);
+			        				return;
+			        			}
 			        			fAgent.getModelBased().execute(fAgent);
 			        		}			        		
 			        	}			        	
 			        	else if (lSolutionMethod.equals("Inverse Reinforcement Learning") ) {
+			        		if( ! fInverseReinforcementLearningParametersSet ){
+			        				JOptionPane.showMessageDialog(TRLMainFrame.this, "Set Inverse Reinforcement Learning parameters first.", "Error" ,JOptionPane.ERROR_MESSAGE);
+			        				return;
+			        		}
 			        		fAgent.getModelBased().execute(fAgent);
 			        		boolean lSolutionFound = fAgent.getInverseReinforcementLearning().execute(fAgent);
 			        		if( fInverseReinforcementLearningDisplayAllGraphsIsSelected || lSolutionFound){
