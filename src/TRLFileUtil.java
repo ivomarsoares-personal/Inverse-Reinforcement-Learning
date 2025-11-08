@@ -99,7 +99,7 @@ public class TRLFileUtil {
 		File lOut = new File(aDirectory, "agents.csv");
 		try ( PrintWriter lPrintWriter = new PrintWriter(new BufferedWriter(new FileWriter(lOut))) ){
 			// Header
-			lPrintWriter.println("Id,InitialStateCellIndex,AbsorbingStateCellIndex,DiscountingFactor,CorrectActionProbability,ActionNoiseProbability");
+			lPrintWriter.println("Id,InitialStateCellIndex,AbsorbingStateCellIndex,DiscountingFactor,LearningRate,CorrectActionProbability,ActionNoiseProbability");
 			List<IRLAgent> lAgents = aGrid.getAgentList();
 			if( lAgents != null ){
 				for( int i = 0; i < lAgents.size(); i++ ){
@@ -110,10 +110,11 @@ public class TRLFileUtil {
 					if( lAgent.getInitialState() != null && lAgent.getInitialState().getIndex() != null ) lInit = lAgent.getInitialState().getIndex();
 					if( lAgent.getAbsorbingState() != null && lAgent.getAbsorbingState().getIndex() != null ) lAbs = lAgent.getAbsorbingState().getIndex();
 					double lDiscountingFactor = lAgent.getDiscountingFactor();
+					double lLearningRate = lAgent.getLearningRate();
 					double lCorrectActionProbability = lAgent.getCorrectActionProbability();
 					double lActionNoiseProbability = lAgent.getActionNoiseProbability();
 					
-					lPrintWriter.println(String.format("%d,%d,%d,%f,%f,%f", lId, lInit, lAbs, lDiscountingFactor,lCorrectActionProbability, lActionNoiseProbability) );
+					lPrintWriter.println(String.format("%d,%d,%d,%f,%f,%f,%f", lId, lInit, lAbs, lDiscountingFactor, lLearningRate, lCorrectActionProbability, lActionNoiseProbability) );
 				}
 			}
 		}
@@ -305,10 +306,11 @@ public class TRLFileUtil {
 				int lInit = Integer.parseInt(lParts[1]);
 				int lAbs = Integer.parseInt(lParts[2]);
 				double lDiscountingFactor = Double.parseDouble(lParts[3]);
-				double lCorrectActionProbability = Double.parseDouble(lParts[4]);
-				double lActionNoiseProbability = Double.parseDouble(lParts[5]);
+				double lLearningRate = Double.parseDouble(lParts[4]);
+				double lCorrectActionProbability = Double.parseDouble(lParts[5]);
+				double lActionNoiseProbability = Double.parseDouble(lParts[6]);
 				// create agent using default probabilities (0.7, 0.3)
-				TRLAgentUtil.getSharedInstance().createAgent(aGrid, lInit, lAbs, lDiscountingFactor, lCorrectActionProbability, lActionNoiseProbability);
+				TRLAgentUtil.getSharedInstance().createAgent(aGrid, lInit, lAbs, lDiscountingFactor, lLearningRate, lCorrectActionProbability, lActionNoiseProbability);
 
 			}
 		}

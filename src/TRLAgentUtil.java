@@ -18,11 +18,12 @@ public class TRLAgentUtil {
 	private TRLAgentUtil(){}
 	
 	
-	public IRLAgent createAgent( final IRLGrid aGrid, final Integer aInitialStateIndex, final Integer aAbsorbingStateIndex, final Double aDiscountingFactor, final Double aCorrectActionProbability, final Double aActionNoiseProbability ){
+	public IRLAgent createAgent( final IRLGrid aGrid, final Integer aInitialStateIndex, final Integer aAbsorbingStateIndex, final Double aDiscountingFactor, final Double aLearningRate, final Double aCorrectActionProbability, final Double aActionNoiseProbability ){
 		
 		IRLAgent lAgent = (IRLAgent) TRLFactory.createRLObject(IRLObject.sAGENT);
 		
 		lAgent.setDiscountingFactor(aDiscountingFactor);
+		lAgent.setLearningRate(aLearningRate);
 		lAgent.setCorrectActionProbability(aCorrectActionProbability);
 		lAgent.setActionNoiseProbability(aActionNoiseProbability);
 		lAgent.setGrid(aGrid);

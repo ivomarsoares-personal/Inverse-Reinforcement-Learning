@@ -1,13 +1,21 @@
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -44,7 +52,7 @@ public class TRLMainFrame extends JFrame {
 
 		//make sure the program exits when the frame closes
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setTitle("GridWorld - Inverse Reinforcement Learning");
+		setTitle("Reinforcement Learning Gridworld");
 
 		setExtendedState( getExtendedState()|JFrame.MAXIMIZED_BOTH );
 
@@ -79,10 +87,28 @@ public class TRLMainFrame extends JFrame {
 		lGridMenu.add(lCreateRewardFunctionMenuItem);
 		
 		JMenu lRLMenu = new JMenu("Reinforcement Learning");
+		JMenu lRLExplorationStrategiesMenu = new JMenu("Action Selection");
+		JMenu lRLModelBasedMenu = new JMenu("Model Based");
+		JMenu lRLModelFreeMenu = new JMenu("Model Free");
+		JMenu lRLOtherAlgorithmsMenu = new JMenu("Other Algorithms");
+		JMenuItem lRLRunMenuItem    = new JMenuItem("Run");
+		
+		JMenuItem lEpsilonGreedyMenuItem  = new JMenuItem("Epsilon-Greedy");
 		JMenuItem lValueIterationMenuItem = new JMenuItem("Value Iteration");
 		JMenuItem lIRLMenuItem            = new JMenuItem("Inverse Reinforcement Learning");
-		lRLMenu.add(lValueIterationMenuItem);
-		lRLMenu.add(lIRLMenuItem);
+		JMenuItem lQlearningMenuItem      = new JMenuItem("Q-Learning");
+				
+		lRLMenu.add(lRLExplorationStrategiesMenu);
+		lRLMenu.add(lRLModelBasedMenu);
+		lRLMenu.add(lRLModelFreeMenu);
+		lRLMenu.add(lRLOtherAlgorithmsMenu);
+		lRLMenu.addSeparator();
+		lRLMenu.add(lRLRunMenuItem);
+		lRLExplorationStrategiesMenu.add(lEpsilonGreedyMenuItem);
+		lRLModelBasedMenu.add(lValueIterationMenuItem);
+		lRLModelFreeMenu.add(lQlearningMenuItem);
+		lRLOtherAlgorithmsMenu.add(lIRLMenuItem);
+		
 		
 		JMenu lDisplayMenu = new JMenu("Display");
 		JCheckBoxMenuItem lCellIdCheckBoxMenuItem = new JCheckBoxMenuItem("Cell Id");
@@ -105,9 +131,7 @@ public class TRLMainFrame extends JFrame {
 		lDisplayMenu.add(lQValuesCheckBoxMenuItem);
 		
 		JMenu lHelpMenu = new JMenu("Help");
-		JMenuItem lTutorialMenuItem = new JMenuItem("Tutorial");
 		JMenuItem lAboutMenuItem = new JMenuItem("About GridWorld");
-		lHelpMenu.add(lTutorialMenuItem);
 		lHelpMenu.add(lAboutMenuItem);
 
 		JMenu lDebugMenu = new JMenu("Debug");
@@ -326,6 +350,8 @@ public class TRLMainFrame extends JFrame {
 				lFinalStateTextField.setText((lNumberOfRows - 1)+"");				
 				JTextField lDiscountingFactorTextField        = new JTextField(5);
 				lDiscountingFactorTextField.setText(0.9+"");
+				JTextField lLearningRateTextField        = new JTextField(5);
+				lLearningRateTextField.setText(0.9+"");
 				JTextField lCorrectActionProbabilityTextField = new JTextField(5);
 				lCorrectActionProbabilityTextField.setText(0.7+"");
 				JTextField lActionNoiseProbabilityTextField   = new JTextField(5);
@@ -339,6 +365,8 @@ public class TRLMainFrame extends JFrame {
 				lCreateAgentPanel.add(lFinalStateTextField);
 				lCreateAgentPanel.add(new JLabel("Discounting Factor:"));
 				lCreateAgentPanel.add(lDiscountingFactorTextField);
+				lCreateAgentPanel.add(new JLabel("Learning Rate:"));
+				lCreateAgentPanel.add(lLearningRateTextField);
 				lCreateAgentPanel.add(new JLabel("Correct Action Probability:"));
 				lCreateAgentPanel.add(lCorrectActionProbabilityTextField);
 				lCreateAgentPanel.add(new JLabel("Action Noise Probability:"));
@@ -354,6 +382,7 @@ public class TRLMainFrame extends JFrame {
 				double lCorrectActionProbability = 0;
 				double lActionNoiseProbability = 0;
 				double lDiscountingFactor = 0;
+				double lLearningRate = 0;
 				
 				try{
 					lInitialStateIndex = Integer.parseInt(lInitialStateTextField.getText());
@@ -361,6 +390,7 @@ public class TRLMainFrame extends JFrame {
 					lCorrectActionProbability = Double.parseDouble(lCorrectActionProbabilityTextField.getText());
 					lActionNoiseProbability = Double.parseDouble(lActionNoiseProbabilityTextField.getText());
 					lDiscountingFactor = Double.parseDouble(lDiscountingFactorTextField.getText());
+					lLearningRate = Double.parseDouble(lLearningRateTextField.getText());
 				}
 				catch(NumberFormatException aNumberFormatException ){
 					JOptionPane.showMessageDialog(TRLMainFrame.this, "Not a number.", "Error" ,JOptionPane.ERROR_MESSAGE);
@@ -399,12 +429,18 @@ public class TRLMainFrame extends JFrame {
 					return;
 				}
 				
+				if( lLearningRate < 0 || lLearningRate > 1 ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Learning Rate must be greater or equal than 0 and lower or equal than 1.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
 
 				fAgent = TRLAgentUtil.getSharedInstance().createAgent(
 						fGrid, 
 						lInitialStateIndex, 
 						lFinalStateIndex,
 						lDiscountingFactor,
+						lLearningRate,
 						lCorrectActionProbability,
 						lActionNoiseProbability);
 				fGridPanel.setAgent(fAgent);
@@ -730,6 +766,118 @@ public class TRLMainFrame extends JFrame {
 			}
 		});
 		
+		lRLRunMenuItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent aActionEvent) {
+				// Create the dialog (modal so it blocks until closed)
+			    JDialog lDialog = new JDialog(TRLMainFrame.this, "Run Settings", true);
+
+			    // Main panel with vertical layout
+			    JPanel lMainPanel = new JPanel();
+			    lMainPanel.setLayout(new BorderLayout(10, 10));
+			    lMainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+			    // Panel for form rows (labels + text fields vertically)
+			    JPanel lFormPanel = new JPanel();
+			    lFormPanel.setLayout(new GridBagLayout());
+			    GridBagConstraints lGridBagConstraints = new GridBagConstraints();
+			    lGridBagConstraints.insets = new Insets(5, 5, 5, 5);
+			    lGridBagConstraints.anchor = GridBagConstraints.WEST;
+			    lGridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+
+			    // Create combo boxes			    
+			    String[] lActionSelectionMethods = { "Epsilon-Greedy", "Softmax" };
+			    JComboBox<String> lActionSelectionMethodComboBox = new JComboBox<>(lActionSelectionMethods);
+			    lActionSelectionMethodComboBox.setSelectedIndex(0);
+			    
+			    String[] lSolutionMethods = { "Model Based", "Model Free" };
+			    JComboBox<String> lSolutionMethodComboBox = new JComboBox<>(lSolutionMethods);
+			    lSolutionMethodComboBox.setSelectedIndex(1);
+			    
+			    String[] lModelBasedMethods = { "Value Iteration" };
+			    JComboBox<String> lModelBasedMethodsComboBox = new JComboBox<>(lModelBasedMethods);
+
+			    String[] lModelFreeMethods = { "Q-Learning" };
+			    JComboBox<String> lModelFreeMethodsComboBox = new JComboBox<>(lModelFreeMethods);
+			    
+			    int lRow = 0;
+
+			    // Helper function-like pattern: add one row (label + field)
+			    
+			    lGridBagConstraints.gridy = lRow;
+			    lGridBagConstraints.gridx = 0;
+			    lFormPanel.add(new JLabel("Action Selection:"), lGridBagConstraints);
+			    lGridBagConstraints.gridx = 1;
+			    lFormPanel.add(lActionSelectionMethodComboBox, lGridBagConstraints);
+
+			    
+			    lRow++;
+			    lGridBagConstraints.gridy = lRow;
+			    lGridBagConstraints.gridx = 0;
+			    lFormPanel.add(new JLabel("Solution Method:"), lGridBagConstraints);
+			    lGridBagConstraints.gridx = 1;
+			    lFormPanel.add(lSolutionMethodComboBox, lGridBagConstraints);
+
+			    lRow++;
+			    lGridBagConstraints.gridy = lRow;
+			    lGridBagConstraints.gridx = 0;
+			    lFormPanel.add(new JLabel("Model Based:"), lGridBagConstraints);
+			    lGridBagConstraints.gridx = 1;
+			    lFormPanel.add(lModelBasedMethodsComboBox, lGridBagConstraints);
+
+			    lRow++;
+			    lGridBagConstraints.gridy = lRow;
+			    lGridBagConstraints.gridx = 0;
+			    lFormPanel.add(new JLabel("Model Free:"), lGridBagConstraints);
+			    lGridBagConstraints.gridx = 1;
+			    lFormPanel.add(lModelFreeMethodsComboBox, lGridBagConstraints);
+
+			    // Add form panel to center of main panel
+			    lMainPanel.add(lFormPanel, BorderLayout.CENTER);
+
+			    // Buttons panel (OK and Cancel at the bottom)
+			    JPanel lButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+
+			    JButton lOkButton = new JButton("OK");
+			    JButton lCancelButton = new JButton("Cancel");
+
+			    lButtonsPanel.add(lOkButton);
+			    lButtonsPanel.add(lCancelButton);
+
+			    // Add buttons panel to bottom of main panel
+			    lMainPanel.add(lButtonsPanel, BorderLayout.SOUTH);
+
+			    // Add main panel to dialog
+			    lDialog.getContentPane().add(lMainPanel);
+
+			    // Dialog size and position
+			    lDialog.pack();
+			    lDialog.setLocationRelativeTo(TRLMainFrame.this);
+
+			    // Behavior for buttons
+			    lOkButton.addActionListener(new ActionListener() {
+			        @Override
+			        public void actionPerformed(ActionEvent e) {
+			            // Here you read the text fields and do something
+
+			        	System.out.println("Pressed OK in RL Run settings dialog");
+
+			            lDialog.dispose();  // close dialog
+			        }
+			    });
+
+			    lCancelButton.addActionListener(e -> {
+			        // Just close the dialog without using the values
+			        lDialog.dispose();
+			    });
+
+			    // Show dialog (modal)
+			    lDialog.setVisible(true);
+
+			}
+		});
+		
 		lPrintWallsInfoMenuItem.addActionListener(new ActionListener() {
 			
 			@Override
@@ -830,23 +978,6 @@ public class TRLMainFrame extends JFrame {
 					
 					System.out.println("\n\n");
 				}
-			}
-		});
-		
-		lTutorialMenuItem.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent aActionEvent) {
-				
-				String lTutorialString = String.format("%s\n%s\n%s\n%s", 
-						"1. Create a Reinforcement Learning Environment by running the actions at the Create Menu.",
-						"2. Find an optimal policy by running the action Value Iteration. The optimal value function is shown in blue and optimal Q values are shown on red. An optimal policy is shown by arrows in blue.",
-						"3. Finally find the reward function by running the action Inverse Reinforcement Learning. Depending on the configuration, "
-						+ "not always a reward function can be found.",
-						"OBS.: The algorithm and RL environnment is from the paper Algorithms for Inverse Reinforcement Learning, Andrew Ng."
-						);
-				
-				JOptionPane.showMessageDialog(TRLMainFrame.this, lTutorialString, "Gridworld" ,JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 		

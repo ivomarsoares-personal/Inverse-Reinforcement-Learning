@@ -14,6 +14,7 @@ public abstract class ARLAgent extends Observable implements IRLAgent {
 	
 	private IRLGrid fGrid;
 	private Double  fDiscountingFactor;
+	private Double fLearningRate;
 	private Double fCorrectActionProbability;
 	private Double fActionNoiseProbability;
 	private IRLPolicy                fPolicy;
@@ -100,6 +101,14 @@ public abstract class ARLAgent extends Observable implements IRLAgent {
 
 	public void setDiscountingFactor(Double aDiscountingFactor) {
 		fDiscountingFactor = aDiscountingFactor;
+	}
+	
+	public Double getLearningRate() {
+		return fLearningRate;
+	}
+
+	public void setLearningRate(Double aLearningRate) {
+		fLearningRate = aLearningRate;
 	}
 	
 	public Double getCorrectActionProbability() {
