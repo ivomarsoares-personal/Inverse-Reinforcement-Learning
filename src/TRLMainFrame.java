@@ -3,8 +3,10 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -25,6 +27,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 
 
 /**
@@ -67,13 +70,35 @@ public class TRLMainFrame extends JFrame {
 		JMenu lFileMenu = new JMenu("File");
 		JMenuItem lNewMenuItem = new JMenuItem("New");
 		JMenuItem lSaveMenuItem = new JMenuItem("Save");
-		JMenuItem lLoadMenuItem = new JMenuItem("Load");
-		JMenuItem lExitMenuItem = new JMenuItem("Exit");
+		JMenuItem lOpenMenuItem = new JMenuItem("Open...");
+		JMenuItem lExitMenuItem = new JMenuItem("Exit Gridworld");
+		
+		lNewMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_N,
+				Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()
+		));
+		
+		lSaveMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_S,
+				Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()
+		));
+		
+		lOpenMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_O,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()
+        ));
+		
+		lExitMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_Q,
+				Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()
+		));
+		
+		
 		lFileMenu.add(lNewMenuItem);
+		lFileMenu.add(lOpenMenuItem);
 		lFileMenu.add(lSaveMenuItem);
-		lFileMenu.add(lLoadMenuItem);
 		lFileMenu.addSeparator();
-		lFileMenu.add(lExitMenuItem);
+     	lFileMenu.add(lExitMenuItem);
 
 		JMenu lGridMenu = new JMenu("Create");
 		JMenu lCreateWallMenu = new JMenu("Wall");
@@ -259,7 +284,7 @@ public class TRLMainFrame extends JFrame {
 			}
 		});
 		
-		lLoadMenuItem.addActionListener( new ActionListener() {
+		lOpenMenuItem.addActionListener( new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent aActionEvent) {
