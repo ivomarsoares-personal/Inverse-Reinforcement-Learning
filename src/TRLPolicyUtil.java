@@ -129,7 +129,7 @@ public class TRLPolicyUtil {
 						double lIterativeValue = 0;
 
 						for( int lDestinationTPStateIndex = 0; lDestinationTPStateIndex < lNumberOfStates; lDestinationTPStateIndex++ ){
-							lIterativeValue += aAgent.getDiscountingFactor() * lTransitionProbabilitiesMatrix.getEntry(lInitialTPStateIndex, lDestinationTPStateIndex) * lValueFunction[lDestinationTPStateIndex];
+							lIterativeValue += ((IRLValueIteration)aAgent.getModelBased()).getDiscountingFactor() * lTransitionProbabilitiesMatrix.getEntry(lInitialTPStateIndex, lDestinationTPStateIndex) * lValueFunction[lDestinationTPStateIndex];
 						}
 
 						if( lIterativeValue > lMaxIterativeValue ){
@@ -181,10 +181,10 @@ public class TRLPolicyUtil {
 					int lStateIndex = lInitialState.getCell().getIndex();
 					double lStateTransitionProbability = lTransitionProbabilitiesMatrix.getEntry(lStateIndex, lCoefficientIndex);
 					if( lStateActionPairIndex == lCoefficientIndex ){
-						lLinearEquationCoefficients[lStateActionPairIndex][lCoefficientIndex] = 1 - aAgent.getDiscountingFactor() * lStateTransitionProbability;
+						lLinearEquationCoefficients[lStateActionPairIndex][lCoefficientIndex] = 1 - ((IRLValueIteration)aAgent.getModelBased()).getDiscountingFactor() * lStateTransitionProbability;
 					}
 					else {
-						lLinearEquationCoefficients[lStateActionPairIndex][lCoefficientIndex] = - aAgent.getDiscountingFactor() * lStateTransitionProbability;
+						lLinearEquationCoefficients[lStateActionPairIndex][lCoefficientIndex] = - ((IRLValueIteration)aAgent.getModelBased()).getDiscountingFactor() * lStateTransitionProbability;
 					}
 				}
 				else if( lInitialState.getCell().getIndex() == lCoefficientIndex ) {
@@ -237,7 +237,7 @@ public class TRLPolicyUtil {
 				for( int lCoefficientIndex = 0; lCoefficientIndex < lStateList.size(); lCoefficientIndex++ ){
 
 					double lStateTransitionProbability = lTransitionProbabilitiesMatrix.getEntry(lStateIndex, lCoefficientIndex);
-					lQvalue += aAgent.getDiscountingFactor() * lStateTransitionProbability * aValueFunction[lCoefficientIndex];
+					lQvalue += ((IRLValueIteration)aAgent.getModelBased()).getDiscountingFactor() * lStateTransitionProbability * aValueFunction[lCoefficientIndex];
 				}
 
 				lActionValueFunctionHashMap.put(lAction, lQvalue);

@@ -17,5 +17,6 @@ public interface IRLObject {
 	public static String sACTION_MOVE_WEST  = "ACTION_MOVE_WEST";
 	public static String sPOLICY            = "POLICY";
 	public static String sREWARD_FUNCTION   = "REWARD_FUNCTION";
+	public static String sMODEL_BASED_VALUE_ITERATION = "MODEL_BASED_VALUE_ITERATION";
 	
 }

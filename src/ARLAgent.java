@@ -13,10 +13,6 @@ public abstract class ARLAgent extends Observable implements IRLAgent {
 	protected int fId;
 	
 	private IRLGrid fGrid;
-	private Double  fDiscountingFactor;
-	private Double fLearningRate;
-	private Double fCorrectActionProbability;
-	private Double fActionNoiseProbability;
 	private IRLPolicy                fPolicy;
 	private java.util.List<IRLState> fStateList = new ArrayList<IRLState>();
 	private IRLState		         fInitialState;
@@ -27,6 +23,8 @@ public abstract class ARLAgent extends Observable implements IRLAgent {
 	private RealMatrix               fTPMatrixEast;
 	private RealMatrix               fTPMatrixSouth;
 	private RealMatrix               fTPMatrixWest;
+	
+	private IRLModelBased            fModelBased;
 	
 
 	public IRLState retrieveState( final int aIndex ){
@@ -64,6 +62,13 @@ public abstract class ARLAgent extends Observable implements IRLAgent {
 		return fStateList;
 	}
 	
+	public IRLModelBased getModelBased() {
+		return fModelBased;
+	}
+	public void setModelBased(IRLModelBased aModelBased) {
+		fModelBased = aModelBased;
+	}
+		
 	
 	public IRLPolicy getPolicy() {
 		return fPolicy;
@@ -95,37 +100,7 @@ public abstract class ARLAgent extends Observable implements IRLAgent {
 		notifyObservers();
 	}
 	
-	public Double getDiscountingFactor() {
-		return fDiscountingFactor;
-	}
 
-	public void setDiscountingFactor(Double aDiscountingFactor) {
-		fDiscountingFactor = aDiscountingFactor;
-	}
-	
-	public Double getLearningRate() {
-		return fLearningRate;
-	}
-
-	public void setLearningRate(Double aLearningRate) {
-		fLearningRate = aLearningRate;
-	}
-	
-	public Double getCorrectActionProbability() {
-		return fCorrectActionProbability;
-	}
-
-	public void setCorrectActionProbability(Double fCorrectActionProbability) {
-		this.fCorrectActionProbability = fCorrectActionProbability;
-	}
-
-	public Double getActionNoiseProbability() {
-		return fActionNoiseProbability;
-	}
-
-	public void setActionNoiseProbability(Double fActionNoiseProbability) {
-		this.fActionNoiseProbability = fActionNoiseProbability;
-	}
 	
 	public RealMatrix getTPMatrixNorth() {
 		return fTPMatrixNorth;
