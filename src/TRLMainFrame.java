@@ -111,6 +111,17 @@ public class TRLMainFrame extends JFrame {
 		JMenuItem lCreateRewardFunctionMenuItem = new JMenuItem("Reward Function");
 		lGridMenu.add(lCreateWallMenu);
 		lCreateWallMenu.setEnabled(true);
+		
+		lCreateAgentMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_A,
+				Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()
+		));
+		
+		lCreateRewardFunctionMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_R,
+				Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()
+		));
+		
 		lGridMenu.add(lCreateAgentMenuItem);
 		lGridMenu.add(lCreateRewardFunctionMenuItem);
 		
