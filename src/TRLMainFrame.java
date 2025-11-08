@@ -1156,15 +1156,5 @@ public class TRLMainFrame extends JFrame {
 			return false;
 		}			
 		return true;
-	}
-	
-	private void executeValueIteration() {
-		double[] lOptimalValueFunction = TRLPolicyUtil.getSharedInstance().solveValueIterationAssynchronously(fAgent);
-		IRLPolicy lOptimalPolicy = TRLPolicyUtil.getSharedInstance().createPolicyForGivenOptimalValueFunction(fAgent, lOptimalValueFunction);
-		lOptimalPolicy.setValueFunction(lOptimalValueFunction);
-		
-		HashMap<IRLState, HashMap<IRLAction, Double>> lActionValueFunctionHashMap = TRLPolicyUtil.getSharedInstance().solveBellmansEquationsForActionValueFunction(fAgent, lOptimalPolicy.getValueFunction());
-		lOptimalPolicy.setQValueHashMap(lActionValueFunctionHashMap);
-		
-		fAgent.setPolicy(lOptimalPolicy);	
-	}}
+	}	
+}
