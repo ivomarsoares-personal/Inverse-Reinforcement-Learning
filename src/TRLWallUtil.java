@@ -186,6 +186,24 @@ public class TRLWallUtil {
 	}
 	
 	/**
+	 * Checks if all four outer walls exist in the grid.
+	 * 
+	 * @param aGrid
+	 * @return
+	 */
+	public boolean allFourOuterWallsExist(final IRLGrid aGrid) {
+		int lRows = aGrid.getNumberOfRows();
+		int lCols = aGrid.getNumberOfColumns();
+		
+		boolean lNorthWallExists = wallExists(aGrid, 0, 0, lCols, 0);
+		boolean lSouthWallExists = wallExists(aGrid, 0, lRows, lCols, lRows);
+		boolean lWestWallExists  = wallExists(aGrid, 0, 0, 0, lRows);
+		boolean lEastWallExists  = wallExists(aGrid, lCols, 0, lCols, lRows);
+		
+		return lNorthWallExists && lSouthWallExists && lWestWallExists && lEastWallExists;
+	}
+	
+	/**
 	 * Returns the next available wall ID in the grid.
 	 * 
 	 * @param aGrid

@@ -665,10 +665,14 @@ public class TRLMainFrame extends JFrame {
 				}
 				
 				if ( fGrid.getWallList().size() != 4 ) {
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "Value iteration can only be performed in Gridworld with 4 outer walls.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Value iteration can only be performed in Gridworld with exactly four outer walls.", "Error" ,JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				
+				if (!TRLWallUtil.getSharedInstance().allFourOuterWallsExist(fGrid)) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Value iteration can only be performed in Gridworld with the four outer walls existing.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
 				
 				JPanel lValueIterationPanel = new JPanel();
 				
@@ -751,7 +755,12 @@ public class TRLMainFrame extends JFrame {
 				
 			
 				if ( fGrid.getWallList().size() != 4 ) {
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "Inverse Reinforcement Learning can only be performed in Gridworlds with 4 outer walls.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Inverse Reinforcement Learning can only be performed in Gridworlds with exactly 4 outer walls.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if (!TRLWallUtil.getSharedInstance().allFourOuterWallsExist(fGrid)) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Inverse Reinforcement Learning can only be performed in Gridworld with the four outer walls existing.", "Error" ,JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				
