@@ -16,7 +16,7 @@ public class TRLWallUtil {
 		int lFinalVerticeXCoordinate   = getVerticeXCoordinate( aFinalVertice );
 		int lFinalVerticeYCoordinate   = getVerticeYCoordinate( aFinalVertice );	
 
-		return createWall(aGrid, lInitialVerticeXCoordinate, lInitialVerticeYCoordinate, lFinalVerticeXCoordinate, lFinalVerticeYCoordinate);
+		return createWall(aGrid, -1, lInitialVerticeXCoordinate, lInitialVerticeYCoordinate, lFinalVerticeXCoordinate, lFinalVerticeYCoordinate);
 	}
 	
 	/**
@@ -29,12 +29,18 @@ public class TRLWallUtil {
 	 * @param aFinalVerticeYCoordinate
 	 * @return
 	 */
-	public IRLWall createWall(IRLGrid aGrid, final int aInitialVerticeXCoordinate, final int aInitialVerticeYCoordinate, final int aFinalVerticeXCoordinate, final int  aFinalVerticeYCoordinate) {
+	public IRLWall createWall(IRLGrid aGrid, final int aId, final int aInitialVerticeXCoordinate, final int aInitialVerticeYCoordinate, final int aFinalVerticeXCoordinate, final int  aFinalVerticeYCoordinate) {
 		IRLWall lWall = (IRLWall) TRLFactory.createRLObject(IRLGridComponent.sWALL);
 		lWall.setInitialVerticeXCoordinate(aInitialVerticeXCoordinate);
 		lWall.setInitialVerticeYCoordinate(aInitialVerticeYCoordinate);
 		lWall.setFinalVerticeXCoordinate(aFinalVerticeXCoordinate);
 		lWall.setFinalVerticeYCoordinate(aFinalVerticeYCoordinate);
+		
+		int lId = aId;
+		if( lId < 0 ){
+			lId = getNextId( aGrid );
+		}		
+		lWall.setId( lId );
 		aGrid.getWallList().add(lWall);
 
 		// Determine orientation and populate adjacent cells lists
@@ -177,6 +183,40 @@ public class TRLWallUtil {
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * Checks if all four outer walls exist in the grid.
+	 * 
+	 * @param aGrid
+	 * @return
+	 */
+	public boolean allFourOuterWallsExist(final IRLGrid aGrid) {
+		int lRows = aGrid.getNumberOfRows();
+		int lCols = aGrid.getNumberOfColumns();
+		
+		boolean lNorthWallExists = wallExists(aGrid, 0, 0, lCols, 0);
+		boolean lSouthWallExists = wallExists(aGrid, 0, lRows, lCols, lRows);
+		boolean lWestWallExists  = wallExists(aGrid, 0, 0, 0, lRows);
+		boolean lEastWallExists  = wallExists(aGrid, lCols, 0, lCols, lRows);
+		
+		return lNorthWallExists && lSouthWallExists && lWestWallExists && lEastWallExists;
+	}
+	
+	/**
+	 * Returns the next available wall ID in the grid.
+	 * 
+	 * @param aGrid
+	 * @return
+	 */
+	private int getNextId(final IRLGrid aGrid){
+		int lMaxId = -1;
+		for( IRLWall lWall : aGrid.getWallList() ){
+			if( lWall.getId() > lMaxId ){
+				lMaxId = lWall.getId();
+			}
+		}
+		return lMaxId + 1;
 	}
 	
 	public int getVerticeXCoordinate( final String aVertice ){		

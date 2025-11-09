@@ -1,13 +1,21 @@
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
+import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import javax.swing.Box;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -18,6 +26,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 
 
 /**
@@ -39,12 +48,16 @@ public class TRLMainFrame extends JFrame {
 	private JTabbedPane       fTabbedPane;
 	private int fNumberOfRows = 5;
 	private int fNumberOfColumns = 5;
+	private boolean fInverseReinforcementLearningDisplayAllGraphsIsSelected;
+	private boolean fValueIterationParametersSet = false;
+	private boolean fInverseReinforcementLearningParametersSet = false;
+	
 
 	public TRLMainFrame( ){
 
 		//make sure the program exits when the frame closes
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setTitle("GridWorld - Inverse Reinforcement Learning");
+		setTitle("Reinforcement Learning Gridworld");
 
 		setExtendedState( getExtendedState()|JFrame.MAXIMIZED_BOTH );
 
@@ -56,13 +69,35 @@ public class TRLMainFrame extends JFrame {
 		JMenu lFileMenu = new JMenu("File");
 		JMenuItem lNewMenuItem = new JMenuItem("New");
 		JMenuItem lSaveMenuItem = new JMenuItem("Save");
-		JMenuItem lLoadMenuItem = new JMenuItem("Load");
-		JMenuItem lExitMenuItem = new JMenuItem("Exit");
+		JMenuItem lOpenMenuItem = new JMenuItem("Open...");
+		JMenuItem lExitMenuItem = new JMenuItem("Exit Gridworld");
+		
+		lNewMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_N,
+				Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()
+		));
+		
+		lSaveMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_S,
+				Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()
+		));
+		
+		lOpenMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_O,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()
+        ));
+		
+		lExitMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_Q,
+				Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()
+		));
+		
+		
 		lFileMenu.add(lNewMenuItem);
+		lFileMenu.add(lOpenMenuItem);
 		lFileMenu.add(lSaveMenuItem);
-		lFileMenu.add(lLoadMenuItem);
 		lFileMenu.addSeparator();
-		lFileMenu.add(lExitMenuItem);
+     	lFileMenu.add(lExitMenuItem);
 
 		JMenu lGridMenu = new JMenu("Create");
 		JMenu lCreateWallMenu = new JMenu("Wall");
@@ -75,17 +110,49 @@ public class TRLMainFrame extends JFrame {
 		JMenuItem lCreateRewardFunctionMenuItem = new JMenuItem("Reward Function");
 		lGridMenu.add(lCreateWallMenu);
 		lCreateWallMenu.setEnabled(true);
+		
+		lCreateAgentMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_A,
+				Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()
+		));
+		
+		lCreateRewardFunctionMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_R,
+				Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()
+		));
+		
 		lGridMenu.add(lCreateAgentMenuItem);
 		lGridMenu.add(lCreateRewardFunctionMenuItem);
 		
 		JMenu lRLMenu = new JMenu("Reinforcement Learning");
+		JMenu lRLExplorationStrategiesMenu = new JMenu("Action Selection");
+		JMenu lRLModelBasedMenu = new JMenu("Model Based");
+		JMenu lRLModelFreeMenu = new JMenu("Model Free");
+		JMenu lRLOtherAlgorithmsMenu = new JMenu("Other Algorithms");
+		JMenuItem lRLRunMenuItem    = new JMenuItem("Run");
+		
+		JMenuItem lEpsilonGreedyMenuItem  = new JMenuItem("Epsilon-Greedy");
 		JMenuItem lValueIterationMenuItem = new JMenuItem("Value Iteration");
 		JMenuItem lIRLMenuItem            = new JMenuItem("Inverse Reinforcement Learning");
-		lRLMenu.add(lValueIterationMenuItem);
-		lRLMenu.add(lIRLMenuItem);
+		JMenuItem lQlearningMenuItem      = new JMenuItem("Q-Learning");
+				
+		lRLMenu.add(lRLExplorationStrategiesMenu);
+		lRLMenu.add(lRLModelBasedMenu);
+		lRLMenu.add(lRLModelFreeMenu);
+		lRLMenu.add(lRLOtherAlgorithmsMenu);
+		lRLMenu.addSeparator();
+		lRLMenu.add(lRLRunMenuItem);
+		lRLExplorationStrategiesMenu.add(lEpsilonGreedyMenuItem);
+		lRLModelBasedMenu.add(lValueIterationMenuItem);
+		lRLModelFreeMenu.add(lQlearningMenuItem);
+		lRLOtherAlgorithmsMenu.add(lIRLMenuItem);
+		
 		
 		JMenu lDisplayMenu = new JMenu("Display");
 		JCheckBoxMenuItem lCellIdCheckBoxMenuItem = new JCheckBoxMenuItem("Cell Id");
+		JCheckBoxMenuItem lWallIdCheckBoxMenuItem = new JCheckBoxMenuItem("Wall Id");
+		
+		
 		JCheckBoxMenuItem lVerticesCoordinatesCheckBoxMenuItem = new JCheckBoxMenuItem("Vertices Coordinages");		
 		JMenu lPolicyMenu = new JMenu("Policy");
 		JCheckBoxMenuItem lPolicyArrowsCheckBoxMenuItem = new JCheckBoxMenuItem("Arrows");
@@ -96,18 +163,18 @@ public class TRLMainFrame extends JFrame {
 		
 		lCellIdCheckBoxMenuItem.setSelected(true);
 		lVerticesCoordinatesCheckBoxMenuItem.setSelected(false);
+		lWallIdCheckBoxMenuItem.setSelected(false);
 		lPolicyArrowsCheckBoxMenuItem.setSelected(true);
 		lPolicyStateValuesBoxMenuItem.setSelected(true);
 		lQValuesCheckBoxMenuItem.setSelected(true);
 		lDisplayMenu.add(lCellIdCheckBoxMenuItem);
+		lDisplayMenu.add(lWallIdCheckBoxMenuItem);
 		lDisplayMenu.add(lVerticesCoordinatesCheckBoxMenuItem);
 		lDisplayMenu.add(lPolicyMenu);
 		lDisplayMenu.add(lQValuesCheckBoxMenuItem);
 		
 		JMenu lHelpMenu = new JMenu("Help");
-		JMenuItem lTutorialMenuItem = new JMenuItem("Tutorial");
 		JMenuItem lAboutMenuItem = new JMenuItem("About GridWorld");
-		lHelpMenu.add(lTutorialMenuItem);
 		lHelpMenu.add(lAboutMenuItem);
 
 		JMenu lDebugMenu = new JMenu("Debug");
@@ -134,6 +201,7 @@ public class TRLMainFrame extends JFrame {
 		add( fTabbedPane, BorderLayout.CENTER);
 
 		fGridPanel.setDisplayCellIds( lCellIdCheckBoxMenuItem.isSelected() );
+		fGridPanel.setDisplayWallIds(lWallIdCheckBoxMenuItem.isSelected());
 		fGridPanel.setDisplayPolicyActionArrows( lPolicyArrowsCheckBoxMenuItem.isSelected() );
 		fGridPanel.setDisplayPolicyStateValues( lPolicyStateValuesBoxMenuItem.isSelected() );
 		fGridPanel.setDisplayQValues(lQValuesCheckBoxMenuItem.isSelected());
@@ -157,6 +225,9 @@ public class TRLMainFrame extends JFrame {
 				lNumberOfRowsTextField.setText("");
 				JTextField lNumberOfColumnsTextField = new JTextField(5); 
 				lNumberOfColumnsTextField.setText("");
+				JCheckBoxMenuItem lCreateOuterWallsCheckBoxMenuItem = new JCheckBoxMenuItem("Create Outer Walls");
+				lCreateOuterWallsCheckBoxMenuItem.setSelected(true);
+				
 
 				
 				JPanel lCreateGridWorldPanel = new JPanel();
@@ -170,6 +241,7 @@ public class TRLMainFrame extends JFrame {
 				lCreateGridWorldPanel.add(new JLabel("Number of Columns:"));
 				lCreateGridWorldPanel.add(lNumberOfColumnsTextField);
 				lNumberOfColumnsTextField.setText(fNumberOfRows + "");
+				lCreateGridWorldPanel.add(lCreateOuterWallsCheckBoxMenuItem);
 				
 				int lResult = JOptionPane.showConfirmDialog(null, lCreateGridWorldPanel, "GridWorld information", JOptionPane.OK_CANCEL_OPTION);
 				if (lResult != JOptionPane.OK_OPTION) {
@@ -191,9 +263,9 @@ public class TRLMainFrame extends JFrame {
 				}
 
 				// Create the grid first, then set its name and wire it to the UI.
-				fGrid = TRLGridUtil.getSharedInstance().createGrid(fNumberOfRows, fNumberOfColumns);				
+				fGrid = TRLGridUtil.getSharedInstance().createGrid(fNumberOfRows, fNumberOfColumns, lCreateOuterWallsCheckBoxMenuItem.isSelected());				
 				fGrid.setName(lGridWorldNameTextField.getText());
-				setTitle("GridWorld - " + fGrid.getName() + " - Inverse Reinforcement Learning");
+				setTitle("GridWorld - " + fGrid.getName() + " - Reinforcement Learning");
 				fGridPanel.setGrid(fGrid);
 				((ARLGrid)fGrid).addObserver(fGridPanel);
 				fGridPanel.repaint();
@@ -232,7 +304,7 @@ public class TRLMainFrame extends JFrame {
 			}
 		});
 		
-		lLoadMenuItem.addActionListener( new ActionListener() {
+		lOpenMenuItem.addActionListener( new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent aActionEvent) {
@@ -253,7 +325,7 @@ public class TRLMainFrame extends JFrame {
 				// refresh tabs and title
 				fTabbedPane.removeAll();
 				fTabbedPane.addTab("Grid", fGridPanel);
-				setTitle("GridWorld - " + fGrid.getName() + " - Inverse Reinforcement Learning");
+				setTitle("GridWorld - " + fGrid.getName() + " - Reinforcement Learning");
 				fGridPanel.repaint();
 			}
 		});
@@ -270,6 +342,14 @@ public class TRLMainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent aActionEvent) {				
 				fGridPanel.setDisplayCellIds( lCellIdCheckBoxMenuItem.isSelected() );
+				fGridPanel.repaint();
+			}			
+		});
+		
+		lWallIdCheckBoxMenuItem.addActionListener( new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent aActionEvent) {				
+				fGridPanel.setDisplayWallIds( lWallIdCheckBoxMenuItem.isSelected() );
 				fGridPanel.repaint();
 			}			
 		});
@@ -324,12 +404,6 @@ public class TRLMainFrame extends JFrame {
 				lInitialStateTextField.setText( (lNumberOfRows * (lNumberOfRows - 1))+"");
 				JTextField lFinalStateTextField               = new JTextField(5); 
 				lFinalStateTextField.setText((lNumberOfRows - 1)+"");				
-				JTextField lDiscountingFactorTextField        = new JTextField(5);
-				lDiscountingFactorTextField.setText(0.9+"");
-				JTextField lCorrectActionProbabilityTextField = new JTextField(5);
-				lCorrectActionProbabilityTextField.setText(0.7+"");
-				JTextField lActionNoiseProbabilityTextField   = new JTextField(5);
-				lActionNoiseProbabilityTextField.setText(0.3+"");
 				
 				JPanel lCreateAgentPanel = new JPanel();
 							
@@ -337,12 +411,6 @@ public class TRLMainFrame extends JFrame {
 				lCreateAgentPanel.add(lInitialStateTextField);
 				lCreateAgentPanel.add(new JLabel("Final State Index:"));
 				lCreateAgentPanel.add(lFinalStateTextField);
-				lCreateAgentPanel.add(new JLabel("Discounting Factor:"));
-				lCreateAgentPanel.add(lDiscountingFactorTextField);
-				lCreateAgentPanel.add(new JLabel("Correct Action Probability:"));
-				lCreateAgentPanel.add(lCorrectActionProbabilityTextField);
-				lCreateAgentPanel.add(new JLabel("Action Noise Probability:"));
-				lCreateAgentPanel.add(lActionNoiseProbabilityTextField);
 
 				int lResult = JOptionPane.showConfirmDialog(null, lCreateAgentPanel, "Agent information", JOptionPane.OK_CANCEL_OPTION);
 				if (lResult != JOptionPane.OK_OPTION) {
@@ -351,16 +419,10 @@ public class TRLMainFrame extends JFrame {
 				
 				int lInitialStateIndex = 0;
 				int lFinalStateIndex = 0;
-				double lCorrectActionProbability = 0;
-				double lActionNoiseProbability = 0;
-				double lDiscountingFactor = 0;
 				
 				try{
 					lInitialStateIndex = Integer.parseInt(lInitialStateTextField.getText());
 					lFinalStateIndex = Integer.parseInt(lFinalStateTextField.getText());
-					lCorrectActionProbability = Double.parseDouble(lCorrectActionProbabilityTextField.getText());
-					lActionNoiseProbability = Double.parseDouble(lActionNoiseProbabilityTextField.getText());
-					lDiscountingFactor = Double.parseDouble(lDiscountingFactorTextField.getText());
 				}
 				catch(NumberFormatException aNumberFormatException ){
 					JOptionPane.showMessageDialog(TRLMainFrame.this, "Not a number.", "Error" ,JOptionPane.ERROR_MESSAGE);
@@ -379,34 +441,12 @@ public class TRLMainFrame extends JFrame {
 					return;
 				}
 								
-				if( lCorrectActionProbability < 0 || lCorrectActionProbability > 1 ){
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "Correct Action Probability must be greater or equal than 0 and lower or equal than 1.", "Error" ,JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				
-				if( lActionNoiseProbability < 0 || lActionNoiseProbability > 1 ){
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "Action Noise Probability must be greater or equal than 0 and lower or equal than 1.", "Error" ,JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				
-				if( Math.abs(lCorrectActionProbability + lActionNoiseProbability - 1) > 0.00001 ){
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "Correct Action Probability and Action Noise Probability must add up to 1.", "Error" ,JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				
-				if( lDiscountingFactor < 0 || lDiscountingFactor >= 1 ){
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "Discounting Factor must be greater or equal than 0 and lower than 1.", "Error" ,JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				
+			
 
 				fAgent = TRLAgentUtil.getSharedInstance().createAgent(
 						fGrid, 
 						lInitialStateIndex, 
-						lFinalStateIndex,
-						lDiscountingFactor,
-						lCorrectActionProbability,
-						lActionNoiseProbability);
+						lFinalStateIndex);
 				fGridPanel.setAgent(fAgent);
 				((ARLAgent)fAgent).addObserver(fGridPanel);
 				fGridPanel.repaint();
@@ -624,12 +664,77 @@ public class TRLMainFrame extends JFrame {
 					return;
 				}
 				
-				if ( fGrid.getWallList().size() > 4 ) {
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "Cant perform value iteration in a gridworld with inner walls.", "Error" ,JOptionPane.ERROR_MESSAGE);
+				if ( fGrid.getWallList().size() != 4 ) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Value iteration can only be performed in Gridworld with exactly four outer walls.", "Error" ,JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				
-				executeValueIteration();		
+				if (!TRLWallUtil.getSharedInstance().allFourOuterWallsExist(fGrid)) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Value iteration can only be performed in Gridworld with the four outer walls existing.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				JPanel lValueIterationPanel = new JPanel();
+				
+				JTextField lDiscountingFactorTextField        = new JTextField(5);
+				lDiscountingFactorTextField.setText(0.9+"");
+				JTextField lCorrectActionProbabilityTextField = new JTextField(5);
+				lCorrectActionProbabilityTextField.setText(0.7+"");
+				JTextField lActionNoiseProbabilityTextField   = new JTextField(5);
+				lActionNoiseProbabilityTextField.setText(0.3+"");
+
+				
+				lValueIterationPanel.add(new JLabel("Discounting Factor:"));
+				lValueIterationPanel.add(lDiscountingFactorTextField);
+				lValueIterationPanel.add(new JLabel("Correct Action Probability:"));
+				lValueIterationPanel.add(lCorrectActionProbabilityTextField);
+				lValueIterationPanel.add(new JLabel("Action Noise Probability:"));
+				lValueIterationPanel.add(lActionNoiseProbabilityTextField);
+
+				
+				int lResult = JOptionPane.showConfirmDialog(null, lValueIterationPanel, "Value Iteration", JOptionPane.OK_CANCEL_OPTION);
+				if (lResult != JOptionPane.OK_OPTION) {
+					return;
+				}
+
+				double lDiscountingFactor = 0;
+				double lCorrectActionProbability = 0;
+				double lActionNoiseProbability = 0;
+				
+				try {
+					lDiscountingFactor = Double.parseDouble(lDiscountingFactorTextField.getText());
+					lCorrectActionProbability = Double.parseDouble(lCorrectActionProbabilityTextField.getText());
+					lActionNoiseProbability = Double.parseDouble(lActionNoiseProbabilityTextField.getText());	
+				}
+				catch(NumberFormatException aNumberFormatException ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Not a number.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if( lCorrectActionProbability < 0 || lCorrectActionProbability > 1 ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Correct Action Probability must be greater or equal than 0 and lower or equal than 1.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if( lActionNoiseProbability < 0 || lActionNoiseProbability > 1 ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Action Noise Probability must be greater or equal than 0 and lower or equal than 1.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if( Math.abs(lCorrectActionProbability + lActionNoiseProbability - 1) > 0.00001 ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Correct Action Probability and Action Noise Probability must add up to 1.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if( lDiscountingFactor < 0 || lDiscountingFactor >= 1 ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Discounting Factor must be greater or equal than 0 and lower than 1.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				IRLValueIteration lValueIteration = TRLModelBasedUtil.getSharedInstance().createValueIteration(lDiscountingFactor, lCorrectActionProbability, lActionNoiseProbability);
+				fAgent.setModelBased(lValueIteration);				
+				TRLModelBasedUtil.getSharedInstance().createTransitionProbabilities(fAgent, lCorrectActionProbability, lActionNoiseProbability);	
+				fValueIterationParametersSet = true;
 			}
 		});
 		
@@ -649,12 +754,23 @@ public class TRLMainFrame extends JFrame {
 				}
 				
 			
-				if ( fGrid.getWallList().size() > 4 ) {
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "Cant perform IRL in a gridworld with inner walls.", "Error" ,JOptionPane.ERROR_MESSAGE);
+				if ( fGrid.getWallList().size() != 4 ) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Inverse Reinforcement Learning can only be performed in Gridworlds with exactly 4 outer walls.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if (!TRLWallUtil.getSharedInstance().allFourOuterWallsExist(fGrid)) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Inverse Reinforcement Learning can only be performed in Gridworld with the four outer walls existing.", "Error" ,JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				
 
+				JTextField lDiscountingFactorTextField        = new JTextField(5);
+				lDiscountingFactorTextField.setText(0.9+"");
+				JTextField lCorrectActionProbabilityTextField = new JTextField(5);
+				lCorrectActionProbabilityTextField.setText(0.7+"");
+				JTextField lActionNoiseProbabilityTextField   = new JTextField(5);
+				lActionNoiseProbabilityTextField.setText(0.3+"");
 				JTextField lRMaxTextField = new JTextField(5);
 				lRMaxTextField.setText(1 + "");
 				JTextField lMinRegularizationTextField = new JTextField(5);
@@ -668,6 +784,12 @@ public class TRLMainFrame extends JFrame {
 				
 
 				JPanel lIRLPanel = new JPanel();
+				lIRLPanel.add(new JLabel("Discounting Factor:"));
+				lIRLPanel.add(lDiscountingFactorTextField);
+				lIRLPanel.add(new JLabel("Correct Action Probability:"));
+				lIRLPanel.add(lCorrectActionProbabilityTextField);
+				lIRLPanel.add(new JLabel("Action Noise Probability:"));
+				lIRLPanel.add(lActionNoiseProbabilityTextField);
 				lIRLPanel.add(new JLabel("RMax:"));
 				lIRLPanel.add(lRMaxTextField);
 				lIRLPanel.add(new JLabel("Min Lambda:"));
@@ -683,50 +805,201 @@ public class TRLMainFrame extends JFrame {
 					return;
 				}
 				
-				
-				// Running Value Iteration before
-				executeValueIteration() ;
-				
-				
 				// Running now IRL
-				double lLambda = 0;
 				double lMinLambda = 0;
 				double lMaxLambda = 0;
 				double lStepLambda = 0;
-				try{ 
+				double lDiscountingFactor = 0;
+				double lCorrectActionProbability = 0;
+				double lActionNoiseProbability = 0;
+				double lRMax = 0;
+				try{
+					lDiscountingFactor = Double.parseDouble(lDiscountingFactorTextField.getText());
+					lCorrectActionProbability = Double.parseDouble(lCorrectActionProbabilityTextField.getText());
+					lActionNoiseProbability = Double.parseDouble(lActionNoiseProbabilityTextField.getText());
+
 					lMinLambda = Double.parseDouble(lMinRegularizationTextField.getText());
 					lMaxLambda = Double.parseDouble(lMaxRegularizationTextField.getText());
 					lStepLambda = Double.parseDouble(lRegularizationStepTextField.getText() );
+					
+					lRMax = Double.parseDouble(lRMaxTextField.getText());
 				}
 				catch(NumberFormatException aNumberFormatException ){
 					JOptionPane.showMessageDialog(TRLMainFrame.this, "Not a number.", "Error" ,JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				
-				
-				for( lLambda = lMinLambda; lLambda <= lMaxLambda; lLambda = lLambda + lStepLambda ){
-					try{
-						System.out.println("Trying Lambda: " + lLambda);
-						double lRMax = Double.parseDouble(lRMaxTextField.getText());
-						double[] lIRLRewardFunction = TRLIRLUtil.getSharedInstance().solveIRL( fAgent, lRMax, lLambda );	
-						if( lDisplayAllGraphsCheckBox.isSelected() || TRLIRLUtil.getSharedInstance().iRLSolutionFound(fAgent, lRMax, lIRLRewardFunction)){
-							fIRLRewardPanel = new TRLIRLRewardPanel();
-							fIRLRewardPanel.setRewardFunction(lIRLRewardFunction);
-							fIRLRewardPanel.setRMax(lRMax);
-							fIRLRewardPanel.setRegularization(lLambda);
-							fIRLRewardPanel.generateChart();
-							fTabbedPane.add("Reward Function (" + lRMaxTextField.getText() + "," + String.format("%.2f", lLambda) + ")" , fIRLRewardPanel);
-							if( ! lDisplayAllGraphsCheckBox.isSelected() ){
-								break;
-							}
-						}
-					}
-
-					catch(org.apache.commons.math3.optim.linear.UnboundedSolutionException aUnboundedSolutionException ){
-						System.err.println("UnboundedSolutionException for Lambda " + lLambda );
-						continue;
-					}
+				if( lCorrectActionProbability < 0 || lCorrectActionProbability > 1 ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Correct Action Probability must be greater or equal than 0 and lower or equal than 1.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
 				}
+				
+				if( lActionNoiseProbability < 0 || lActionNoiseProbability > 1 ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Action Noise Probability must be greater or equal than 0 and lower or equal than 1.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if( Math.abs(lCorrectActionProbability + lActionNoiseProbability - 1) > 0.00001 ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Correct Action Probability and Action Noise Probability must add up to 1.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				if( lDiscountingFactor < 0 || lDiscountingFactor >= 1 ){
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Discounting Factor must be greater or equal than 0 and lower than 1.", "Error" ,JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				IRLValueIteration lValueIteration = TRLModelBasedUtil.getSharedInstance().createValueIteration(lDiscountingFactor, lCorrectActionProbability, lActionNoiseProbability);
+				fAgent.setModelBased(lValueIteration);				
+				TRLModelBasedUtil.getSharedInstance().createTransitionProbabilities(fAgent, lCorrectActionProbability, lActionNoiseProbability);
+				
+				IRLInverseReinforcementLearning lIRL = TRLInverseReinforcementLearningUtil.getSharedInstance().createIRL(fAgent, lDiscountingFactor, lCorrectActionProbability, lActionNoiseProbability, lStepLambda, lMinLambda, lMaxLambda, lRMax);
+				fAgent.setInverseReinforcementLearning(lIRL);
+				fInverseReinforcementLearningDisplayAllGraphsIsSelected = lDisplayAllGraphsCheckBox.isSelected();
+				fInverseReinforcementLearningParametersSet = true;
+				
+			}
+		});
+		
+		lRLRunMenuItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent aActionEvent) {
+				// Create the dialog (modal so it blocks until closed)
+			    JDialog lDialog = new JDialog(TRLMainFrame.this, "Run Settings", true);
+
+			    // Main panel with vertical layout
+			    JPanel lMainPanel = new JPanel();
+			    lMainPanel.setLayout(new BorderLayout(10, 10));
+			    lMainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+			    // Panel for form rows (labels + text fields vertically)
+			    JPanel lFormPanel = new JPanel();
+			    lFormPanel.setLayout(new GridBagLayout());
+			    GridBagConstraints lGridBagConstraints = new GridBagConstraints();
+			    lGridBagConstraints.insets = new Insets(5, 5, 5, 5);
+			    lGridBagConstraints.anchor = GridBagConstraints.WEST;
+			    lGridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+
+			    // Create combo boxes			    
+			    String[] lActionSelectionMethods = { "Epsilon-Greedy", "Softmax" };
+			    JComboBox<String> lActionSelectionMethodComboBox = new JComboBox<>(lActionSelectionMethods);
+			    lActionSelectionMethodComboBox.setSelectedIndex(0);
+			    
+			    String[] lSolutionMethods = { "Model Based", "Model Free", "Inverse Reinforcement Learning" };
+			    JComboBox<String> lSolutionMethodComboBox = new JComboBox<>(lSolutionMethods);
+			    lSolutionMethodComboBox.setSelectedIndex(1);
+			    
+			    String[] lModelBasedMethods = { "Value Iteration" };
+			    JComboBox<String> lModelBasedMethodsComboBox = new JComboBox<>(lModelBasedMethods);
+
+			    String[] lModelFreeMethods = { "Q-Learning" };
+			    JComboBox<String> lModelFreeMethodsComboBox = new JComboBox<>(lModelFreeMethods);
+			    
+			    int lRow = 0;
+
+			    // Helper function-like pattern: add one row (label + field)
+			    
+			    lGridBagConstraints.gridy = lRow;
+			    lGridBagConstraints.gridx = 0;
+			    lFormPanel.add(new JLabel("Action Selection:"), lGridBagConstraints);
+			    lGridBagConstraints.gridx = 1;
+			    lFormPanel.add(lActionSelectionMethodComboBox, lGridBagConstraints);
+
+			    
+			    lRow++;
+			    lGridBagConstraints.gridy = lRow;
+			    lGridBagConstraints.gridx = 0;
+			    lFormPanel.add(new JLabel("Solution Method:"), lGridBagConstraints);
+			    lGridBagConstraints.gridx = 1;
+			    lFormPanel.add(lSolutionMethodComboBox, lGridBagConstraints);
+
+			    lRow++;
+			    lGridBagConstraints.gridy = lRow;
+			    lGridBagConstraints.gridx = 0;
+			    lFormPanel.add(new JLabel("Model Based:"), lGridBagConstraints);
+			    lGridBagConstraints.gridx = 1;
+			    lFormPanel.add(lModelBasedMethodsComboBox, lGridBagConstraints);
+
+			    lRow++;
+			    lGridBagConstraints.gridy = lRow;
+			    lGridBagConstraints.gridx = 0;
+			    lFormPanel.add(new JLabel("Model Free:"), lGridBagConstraints);
+			    lGridBagConstraints.gridx = 1;
+			    lFormPanel.add(lModelFreeMethodsComboBox, lGridBagConstraints);
+
+			    // Add form panel to center of main panel
+			    lMainPanel.add(lFormPanel, BorderLayout.CENTER);
+
+			    // Buttons panel (OK and Cancel at the bottom)
+			    JPanel lButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+
+			    JButton lRunButton = new JButton("Run");
+			    JButton lCancelButton = new JButton("Cancel");
+
+			    lButtonsPanel.add(lRunButton);
+			    lButtonsPanel.add(lCancelButton);
+
+			    // Add buttons panel to bottom of main panel
+			    lMainPanel.add(lButtonsPanel, BorderLayout.SOUTH);
+
+			    // Add main panel to dialog
+			    lDialog.getContentPane().add(lMainPanel);
+
+			    // Dialog size and position
+			    lDialog.pack();
+			    lDialog.setLocationRelativeTo(TRLMainFrame.this);
+
+			    // Behavior for buttons
+			    lRunButton.addActionListener(new ActionListener() {
+			        @Override
+			        public void actionPerformed(ActionEvent aActionEvent) {
+			            // Here you read the text fields and do something
+			        	
+			        	String lSolutionMethod =  (String) lSolutionMethodComboBox.getSelectedItem();			        	
+			        	if(lSolutionMethod.equals("Model Based") ) {			        		
+			        		String lModelBased = (String) lModelBasedMethodsComboBox.getSelectedItem();			        		
+			        		if (lModelBased.equals("Value Iteration")){
+			        			if( ! fValueIterationParametersSet ){
+			        				JOptionPane.showMessageDialog(TRLMainFrame.this, "Set Value Iteration parameters first.", "Error" ,JOptionPane.ERROR_MESSAGE);
+			        				return;
+			        			}
+			        			fAgent.getModelBased().execute(fAgent);
+			        		}			        		
+			        	}			        	
+			        	else if (lSolutionMethod.equals("Inverse Reinforcement Learning") ) {
+			        		if( ! fInverseReinforcementLearningParametersSet ){
+			        				JOptionPane.showMessageDialog(TRLMainFrame.this, "Set Inverse Reinforcement Learning parameters first.", "Error" ,JOptionPane.ERROR_MESSAGE);
+			        				return;
+			        		}
+			        		fAgent.getModelBased().execute(fAgent);
+			        		boolean lSolutionFound = fAgent.getInverseReinforcementLearning().execute(fAgent);
+			        		if( fInverseReinforcementLearningDisplayAllGraphsIsSelected || lSolutionFound){
+								fIRLRewardPanel = new TRLIRLRewardPanel();
+								fIRLRewardPanel.setRewardFunction(fAgent.getInverseReinforcementLearning().getRewardFunction());
+								fIRLRewardPanel.setRMax(fAgent.getInverseReinforcementLearning().getRMax());
+								fIRLRewardPanel.setRegularization(fAgent.getInverseReinforcementLearning().getLambda());
+								fIRLRewardPanel.generateChart();
+								fTabbedPane.add("Reward Function (" + fAgent.getInverseReinforcementLearning().getRMax() + "," + String.format("%.2f", fAgent.getInverseReinforcementLearning().getLambda()) + ")" , fIRLRewardPanel);
+								if( ! fInverseReinforcementLearningDisplayAllGraphsIsSelected ){
+						            lDialog.dispose();  // close dialog
+									return;
+								}
+							}
+			        	}
+
+			            lDialog.dispose();  // close dialog
+			        }
+			    });
+
+			    lCancelButton.addActionListener(e -> {
+			        // Just close the dialog without using the values
+			        lDialog.dispose();
+			    });
+
+			    // Show dialog (modal)
+			    lDialog.setVisible(true);
+
 			}
 		});
 		
@@ -740,11 +1013,13 @@ public class TRLMainFrame extends JFrame {
 					return;
 				}
 				
+				System.out.println("Number of walls: " + fGrid.getWallList().size() + "\n\n");
+				
 				List<IRLWall> lWallsList = fGrid.getWallList();
 				for (int lWallIndex = 0; lWallIndex < lWallsList.size(); lWallIndex++ ) {
 					IRLWall lWall = lWallsList.get(lWallIndex);
 					System.out.println( String.format("Wall %d: Initial Vertice (%d,%d), Final Vertice (%d,%d)", 
-							lWallIndex,
+							lWall.getId(),
 							lWall.getInitialVerticeXCoordinate(),
 							lWall.getInitialVerticeYCoordinate(),
 							lWall.getFinalVerticeXCoordinate(),
@@ -833,23 +1108,6 @@ public class TRLMainFrame extends JFrame {
 			}
 		});
 		
-		lTutorialMenuItem.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent aActionEvent) {
-				
-				String lTutorialString = String.format("%s\n%s\n%s\n%s", 
-						"1. Create a Reinforcement Learning Environment by running the actions at the Create Menu.",
-						"2. Find an optimal policy by running the action Value Iteration. The optimal value function is shown in blue and optimal Q values are shown on red. An optimal policy is shown by arrows in blue.",
-						"3. Finally find the reward function by running the action Inverse Reinforcement Learning. Depending on the configuration, "
-						+ "not always a reward function can be found.",
-						"OBS.: The algorithm and RL environnment is from the paper Algorithms for Inverse Reinforcement Learning, Andrew Ng."
-						);
-				
-				JOptionPane.showMessageDialog(TRLMainFrame.this, lTutorialString, "Gridworld" ,JOptionPane.INFORMATION_MESSAGE);
-			}
-		});
-		
 		lAboutMenuItem.addActionListener(new ActionListener() {
 			
 			@Override
@@ -926,15 +1184,5 @@ public class TRLMainFrame extends JFrame {
 			return false;
 		}			
 		return true;
-	}
-	
-	private void executeValueIteration() {
-		double[] lOptimalValueFunction = TRLPolicyUtil.getSharedInstance().solveValueIterationAssynchronously(fAgent);
-		IRLPolicy lOptimalPolicy = TRLPolicyUtil.getSharedInstance().createPolicyForGivenOptimalValueFunction(fAgent, lOptimalValueFunction);
-		lOptimalPolicy.setValueFunction(lOptimalValueFunction);
-		
-		HashMap<IRLState, HashMap<IRLAction, Double>> lActionValueFunctionHashMap = TRLPolicyUtil.getSharedInstance().solveBellmansEquationsForActionValueFunction(fAgent, lOptimalPolicy.getValueFunction());
-		lOptimalPolicy.setQValueHashMap(lActionValueFunctionHashMap);
-		
-		fAgent.setPolicy(lOptimalPolicy);	
-	}}
+	}	
+}

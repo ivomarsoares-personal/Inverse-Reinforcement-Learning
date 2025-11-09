@@ -87,9 +87,9 @@ public class TRLFileUtil {
 			List<IRLWall> lWalls = aGrid.getWallList();
 			if( lWalls != null ){
 				for( int i = 0; i < lWalls.size(); i++ ){
-					IRLWall lW = lWalls.get(i);
-					int lId = i; // use index as id (no public id getter available)
-					lPrintWriter.println(String.format("%d,%d,%d,%d,%d", lId, lW.getInitialVerticeXCoordinate(), lW.getInitialVerticeYCoordinate(), lW.getFinalVerticeXCoordinate(), lW.getFinalVerticeYCoordinate()));
+					IRLWall lWall = lWalls.get(i);
+					int lId = lWall.getId(); // use index as id (no public id getter available)
+					lPrintWriter.println(String.format("%d,%d,%d,%d,%d", lId, lWall.getInitialVerticeXCoordinate(), lWall.getInitialVerticeYCoordinate(), lWall.getFinalVerticeXCoordinate(), lWall.getFinalVerticeYCoordinate()));
 				}
 			}
 		}
@@ -99,7 +99,7 @@ public class TRLFileUtil {
 		File lOut = new File(aDirectory, "agents.csv");
 		try ( PrintWriter lPrintWriter = new PrintWriter(new BufferedWriter(new FileWriter(lOut))) ){
 			// Header
-			lPrintWriter.println("Id,InitialStateCellIndex,AbsorbingStateCellIndex,DiscountingFactor,CorrectActionProbability,ActionNoiseProbability");
+			lPrintWriter.println("Id,InitialStateCellIndex,AbsorbingStateCellIndex");
 			List<IRLAgent> lAgents = aGrid.getAgentList();
 			if( lAgents != null ){
 				for( int i = 0; i < lAgents.size(); i++ ){
@@ -109,11 +109,8 @@ public class TRLFileUtil {
 					int lAbs = -1;
 					if( lAgent.getInitialState() != null && lAgent.getInitialState().getIndex() != null ) lInit = lAgent.getInitialState().getIndex();
 					if( lAgent.getAbsorbingState() != null && lAgent.getAbsorbingState().getIndex() != null ) lAbs = lAgent.getAbsorbingState().getIndex();
-					double lDiscountingFactor = lAgent.getDiscountingFactor();
-					double lCorrectActionProbability = lAgent.getCorrectActionProbability();
-					double lActionNoiseProbability = lAgent.getActionNoiseProbability();
 					
-					lPrintWriter.println(String.format("%d,%d,%d,%f,%f,%f", lId, lInit, lAbs, lDiscountingFactor,lCorrectActionProbability, lActionNoiseProbability) );
+					lPrintWriter.println(String.format("%d,%d,%d", lId, lInit, lAbs) );
 				}
 			}
 		}
@@ -245,7 +242,7 @@ public class TRLFileUtil {
 				int lRows = lTokens.size() > 1 ? Integer.parseInt(lTokens.get(1)) : 0;
 				int lCols = lTokens.size() > 2 ? Integer.parseInt(lTokens.get(2)) : lRows;
 				
-				IRLGrid lGrid = TRLGridUtil.getSharedInstance().createGrid(lRows, lCols);
+				IRLGrid lGrid = TRLGridUtil.getSharedInstance().createGrid(lRows, lCols, false);
 				lGrid.setName(lName);
 				
 				return lGrid;
@@ -278,7 +275,7 @@ public class TRLFileUtil {
 				int lFx = Integer.parseInt(lParts[3]);
 				int lFy = Integer.parseInt(lParts[4]);
 				
-				TRLWallUtil.getSharedInstance().createWall(aGrid, lIx, lIy, lFx, lFy);
+				TRLWallUtil.getSharedInstance().createWall(aGrid, lId, lIx, lIy, lFx, lFy);
 			}
 		}
 		catch(Exception e){
@@ -304,11 +301,8 @@ public class TRLFileUtil {
 				int lId = Integer.parseInt(lParts[0]);
 				int lInit = Integer.parseInt(lParts[1]);
 				int lAbs = Integer.parseInt(lParts[2]);
-				double lDiscountingFactor = Double.parseDouble(lParts[3]);
-				double lCorrectActionProbability = Double.parseDouble(lParts[4]);
-				double lActionNoiseProbability = Double.parseDouble(lParts[5]);
 				// create agent using default probabilities (0.7, 0.3)
-				TRLAgentUtil.getSharedInstance().createAgent(aGrid, lInit, lAbs, lDiscountingFactor, lCorrectActionProbability, lActionNoiseProbability);
+				TRLAgentUtil.getSharedInstance().createAgent(aGrid, lInit, lAbs);
 
 			}
 		}

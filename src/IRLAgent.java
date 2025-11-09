@@ -14,26 +14,33 @@ public interface IRLAgent extends IRL {
 	public IRLPolicy getPolicy();
 	public void setPolicy(IRLPolicy aPolicy);
 	
+	public IRLModelBased getModelBased();
+	public void setModelBased(IRLModelBased aModelBased);
+	
+	public IRLInverseReinforcementLearning getInverseReinforcementLearning();
+	public void setInverseReinforcementLearning(IRLInverseReinforcementLearning aInverseReinforcementLearning);
+	
 	public java.util.List<IRLState> getStateList();
 	public IRLState retrieveState( final int aIndex );
 	public IRLState retrieveState( final int aRowIndex, final int aColumnIndex );
-	public IRLState getAbsorbingState();
-	public void setAbsorbingState(IRLState aAbsorbingState);
-	public Double getDiscountingFactor();
-	public void setDiscountingFactor(Double aDiscountingFactor);
-	public Double getCorrectActionProbability();
-	public void setCorrectActionProbability(Double fCorrectActionProbability);
-	public Double getActionNoiseProbability();
-	public void setActionNoiseProbability(Double fActionNoiseProbability);
-	public RealMatrix getTPMatrixNorth();
-	public void setTPMatrixNorth(RealMatrix aTPMatrixNorth);
-	public RealMatrix getTPMatrixEast();
-	public void setTPMatrixEast(RealMatrix aTPMatrixEast);
-	public RealMatrix getTPMatrixSouth();
-	public void setTPMatrixSouth(RealMatrix aTPMatrixSouth);
-	public RealMatrix getTPMatrixWest();
-	public void setTPMatrixWest(RealMatrix aTPMatrixWest);
+
 	public IRLState getInitialState();
 	public void setInitialState(IRLState aInitialState);
+	
+	public IRLState getAbsorbingState();
+	public void setAbsorbingState(IRLState aAbsorbingState);
+	
+	public RealMatrix getTPMatrixNorth();
+	public void setTPMatrixNorth(RealMatrix aTPMatrixNorth);
+	
+	public RealMatrix getTPMatrixEast();
+	public void setTPMatrixEast(RealMatrix aTPMatrixEast);
+	
+	public RealMatrix getTPMatrixSouth();
+	public void setTPMatrixSouth(RealMatrix aTPMatrixSouth);
+	
+	public RealMatrix getTPMatrixWest();
+	public void setTPMatrixWest(RealMatrix aTPMatrixWest);
+
 	
 }

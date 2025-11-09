@@ -18,15 +18,10 @@ public class TRLAgentUtil {
 	private TRLAgentUtil(){}
 	
 	
-	public IRLAgent createAgent( final IRLGrid aGrid, final Integer aInitialStateIndex, final Integer aAbsorbingStateIndex, final Double aDiscountingFactor, final Double aCorrectActionProbability, final Double aActionNoiseProbability ){
+	public IRLAgent createAgent( final IRLGrid aGrid, final Integer aInitialStateIndex, final Integer aAbsorbingStateIndex ){
 		
 		IRLAgent lAgent = (IRLAgent) TRLFactory.createRLObject(IRLObject.sAGENT);
-		
-		lAgent.setDiscountingFactor(aDiscountingFactor);
-		lAgent.setCorrectActionProbability(aCorrectActionProbability);
-		lAgent.setActionNoiseProbability(aActionNoiseProbability);
 		lAgent.setGrid(aGrid);
-		
 		aGrid.getAgentList().add(lAgent);
 	
 		
@@ -64,31 +59,8 @@ public class TRLAgentUtil {
 			lState.getActionList().add(lActionSouth);
 			lState.getActionList().add(lActionWest);
 		}
-		
-		createTransitionProbabilities(lAgent, aCorrectActionProbability, aActionNoiseProbability);
+
 		return lAgent;
 	}
-	
-	public void createTransitionProbabilities( final IRLAgent aAgent, final Double aCorrectActionProbability, final Double aActionNoiseProbability ){
-		
-		TRLTransitionProbabilitiesActionMoveNorth lTPActionNorth = new TRLTransitionProbabilitiesActionMoveNorth();
-		TRLTransitionProbabilitiesActionMoveEast  lTPActionEast  = new TRLTransitionProbabilitiesActionMoveEast();
-		TRLTransitionProbabilitiesActionMoveSouth lTPActionSouth = new TRLTransitionProbabilitiesActionMoveSouth();
-		TRLTransitionProbabilitiesActionMoveWest  lTPActionWest  = new TRLTransitionProbabilitiesActionMoveWest();
 
-		RealMatrix lTransitionProbabilitiesActionNorthMatrix = lTPActionNorth.createTransitionProbabilitiesForAction(aCorrectActionProbability, aActionNoiseProbability, aAgent);
-		RealMatrix lTransitionProbabilitiesActionEastMatrix  = lTPActionEast.createTransitionProbabilitiesForAction (aCorrectActionProbability, aActionNoiseProbability, aAgent);
-		RealMatrix lTransitionProbabilitiesActionSouthMatrix = lTPActionSouth.createTransitionProbabilitiesForAction(aCorrectActionProbability, aActionNoiseProbability, aAgent);
-		RealMatrix lTransitionProbabilitiesActionWestMatrix  = lTPActionWest.createTransitionProbabilitiesForAction( aCorrectActionProbability, aActionNoiseProbability, aAgent);
-		
-		aAgent.setTPMatrixNorth(lTransitionProbabilitiesActionNorthMatrix);
-		aAgent.setTPMatrixEast(lTransitionProbabilitiesActionEastMatrix);
-		aAgent.setTPMatrixSouth(lTransitionProbabilitiesActionSouthMatrix);
-		aAgent.setTPMatrixWest(lTransitionProbabilitiesActionWestMatrix);
-		
-	}
-	
-	
-	
-	
 }
