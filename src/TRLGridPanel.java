@@ -112,9 +112,53 @@ public class TRLGridPanel extends JPanel implements Observer {
 			fGridXInPixels =  sGRID_MARGIN;
 			fGridYInPixels = (int) (( lCanvasHeight - fGridLengthInPixels ) / 2.0);
 		}
+		
+		// Drawing outer north border.
+		int lInitialVerticeXCoordinate = 0;
+		int lInitialVerticeYCoordinate = 0;
+		int lFinalVerticeXCoordinate   = getGrid().getNumberOfColumns();	
+		int lFinalVerticeYCoordinate   = 0;
+		double x1 = fGridXInPixels + lInitialVerticeXCoordinate * fCellWidthInPixels;
+		double y1 = fGridYInPixels + lInitialVerticeYCoordinate * fCellHeightInPixels;
+		double x2 = fGridXInPixels + lFinalVerticeXCoordinate * fCellWidthInPixels;
+		double y2 = fGridYInPixels + lFinalVerticeYCoordinate * fCellHeightInPixels;
+		lGraphics2D.drawLine((int)Math.round(x1), (int)Math.round(y1), (int)Math.round(x2), (int)Math.round(y2));
+
+		// Drawing outer west border.
+		lInitialVerticeXCoordinate = 0;
+		lInitialVerticeYCoordinate = 0;
+		lFinalVerticeXCoordinate   = 0;	
+		lFinalVerticeYCoordinate   = getGrid().getNumberOfRows();
+		x1 = fGridXInPixels + lInitialVerticeXCoordinate * fCellWidthInPixels;
+		y1 = fGridYInPixels + lInitialVerticeYCoordinate * fCellHeightInPixels;
+		x2 = fGridXInPixels + lFinalVerticeXCoordinate * fCellWidthInPixels;
+		y2 = fGridYInPixels + lFinalVerticeYCoordinate * fCellHeightInPixels;
+		lGraphics2D.drawLine((int)Math.round(x1), (int)Math.round(y1), (int)Math.round(x2), (int)Math.round(y2));
+
+		// Drawing outer south border.
+		lInitialVerticeXCoordinate = 0;
+		lInitialVerticeYCoordinate = getGrid().getNumberOfRows();
+		lFinalVerticeXCoordinate   = getGrid().getNumberOfColumns();	
+		lFinalVerticeYCoordinate   = getGrid().getNumberOfRows();
+		x1 = fGridXInPixels + lInitialVerticeXCoordinate * fCellWidthInPixels;
+		y1 = fGridYInPixels + lInitialVerticeYCoordinate * fCellHeightInPixels;
+		x2 = fGridXInPixels + lFinalVerticeXCoordinate * fCellWidthInPixels;
+		y2 = fGridYInPixels + lFinalVerticeYCoordinate * fCellHeightInPixels;
+		lGraphics2D.drawLine((int)Math.round(x1), (int)Math.round(y1), (int)Math.round(x2), (int)Math.round(y2));
 
 
+		// Drawing outer east border.
+		lInitialVerticeXCoordinate = getGrid().getNumberOfColumns();
+		lInitialVerticeYCoordinate = 0;
+		lFinalVerticeXCoordinate   = getGrid().getNumberOfColumns();	
+		lFinalVerticeYCoordinate   = getGrid().getNumberOfRows();
+		x1 = fGridXInPixels + lInitialVerticeXCoordinate * fCellWidthInPixels;
+		y1 = fGridYInPixels + lInitialVerticeYCoordinate * fCellHeightInPixels;
+		x2 = fGridXInPixels + lFinalVerticeXCoordinate * fCellWidthInPixels;
+		y2 = fGridYInPixels + lFinalVerticeYCoordinate * fCellHeightInPixels;
+		lGraphics2D.drawLine((int)Math.round(x1), (int)Math.round(y1), (int)Math.round(x2), (int)Math.round(y2));
 
+		
 		// Drawing cells lines.
 		lGraphics2D.setStroke(new BasicStroke(1));
 		int lNumberOfRows    = getGrid().getNumberOfRows();

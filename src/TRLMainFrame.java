@@ -225,6 +225,9 @@ public class TRLMainFrame extends JFrame {
 				lNumberOfRowsTextField.setText("");
 				JTextField lNumberOfColumnsTextField = new JTextField(5); 
 				lNumberOfColumnsTextField.setText("");
+				JCheckBoxMenuItem lCreateOuterWallsCheckBoxMenuItem = new JCheckBoxMenuItem("Create Outer Walls");
+				lCreateOuterWallsCheckBoxMenuItem.setSelected(true);
+				
 
 				
 				JPanel lCreateGridWorldPanel = new JPanel();
@@ -238,6 +241,7 @@ public class TRLMainFrame extends JFrame {
 				lCreateGridWorldPanel.add(new JLabel("Number of Columns:"));
 				lCreateGridWorldPanel.add(lNumberOfColumnsTextField);
 				lNumberOfColumnsTextField.setText(fNumberOfRows + "");
+				lCreateGridWorldPanel.add(lCreateOuterWallsCheckBoxMenuItem);
 				
 				int lResult = JOptionPane.showConfirmDialog(null, lCreateGridWorldPanel, "GridWorld information", JOptionPane.OK_CANCEL_OPTION);
 				if (lResult != JOptionPane.OK_OPTION) {
@@ -259,7 +263,7 @@ public class TRLMainFrame extends JFrame {
 				}
 
 				// Create the grid first, then set its name and wire it to the UI.
-				fGrid = TRLGridUtil.getSharedInstance().createGrid(fNumberOfRows, fNumberOfColumns, true);				
+				fGrid = TRLGridUtil.getSharedInstance().createGrid(fNumberOfRows, fNumberOfColumns, lCreateOuterWallsCheckBoxMenuItem.isSelected());				
 				fGrid.setName(lGridWorldNameTextField.getText());
 				setTitle("GridWorld - " + fGrid.getName() + " - Reinforcement Learning");
 				fGridPanel.setGrid(fGrid);
@@ -660,8 +664,8 @@ public class TRLMainFrame extends JFrame {
 					return;
 				}
 				
-				if ( fGrid.getWallList().size() > 4 ) {
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "Cant perform value iteration in a gridworld with inner walls.", "Error" ,JOptionPane.ERROR_MESSAGE);
+				if ( fGrid.getWallList().size() != 4 ) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Value iteration can only be performed in Gridworld with 4 outer walls.", "Error" ,JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				
@@ -746,8 +750,8 @@ public class TRLMainFrame extends JFrame {
 				}
 				
 			
-				if ( fGrid.getWallList().size() > 4 ) {
-					JOptionPane.showMessageDialog(TRLMainFrame.this, "Cant perform IRL in a gridworld with inner walls.", "Error" ,JOptionPane.ERROR_MESSAGE);
+				if ( fGrid.getWallList().size() != 4 ) {
+					JOptionPane.showMessageDialog(TRLMainFrame.this, "Inverse Reinforcement Learning can only be performed in Gridworlds with 4 outer walls.", "Error" ,JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				
