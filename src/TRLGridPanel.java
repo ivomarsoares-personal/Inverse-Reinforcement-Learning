@@ -54,6 +54,7 @@ public class TRLGridPanel extends JPanel implements Observer {
 
 	
 	private boolean fDisplayCellIds;
+	private boolean fDisplayWallIds;
 	private boolean fDisplayVerticesCoordinates;
 	private boolean fDisplayPolicyActionArrows;
 	private boolean fDisplayPolicyStateValues;
@@ -77,6 +78,7 @@ public class TRLGridPanel extends JPanel implements Observer {
 
 		drawGrid(this, aGraphics);
 		drawWalls(this, aGraphics);
+		drawWallsId(this, aGraphics);
 		drawCellId(this, aGraphics);
 		drawVerticesCoordinates(this, aGraphics);
 		drawInitialStateAndGoalState( this, aGraphics);
@@ -160,6 +162,59 @@ public class TRLGridPanel extends JPanel implements Observer {
 			lGraphics2D.setColor(sGRID_COLOR);
 			lGraphics2D.setStroke(sWALL_STROKE);
 			lGraphics2D.drawLine((int)Math.round(x1), (int)Math.round(y1), (int)Math.round(x2), (int)Math.round(y2));
+		}
+	}
+	
+	public void drawWallsId(final Component aCanvas, final Graphics aGraphics) {
+		if (!fDisplayWallIds) {
+			return;
+		}
+
+		Graphics2D lGraphics2D = (Graphics2D) aGraphics;
+		lGraphics2D.setColor(sCELL_ID_COLOR);
+		lGraphics2D.setFont(sCELL_ID_FONT);
+
+		List<IRLWall> lWallList = fGrid.getWallList();
+		for (int lWallIndex = 0; lWallIndex < lWallList.size(); lWallIndex++) {
+			IRLWall lWall = lWallList.get(lWallIndex);
+			int lInitialVerticeXCoordinate = lWall.getInitialVerticeXCoordinate();
+			int lInitialVerticeYCoordinate = lWall.getInitialVerticeYCoordinate();
+			int lFinalVerticeXCoordinate = lWall.getFinalVerticeXCoordinate();
+			int lFinalVerticeYCoordinate = lWall.getFinalVerticeYCoordinate();
+
+			// Compute midpoint of the wall in pixel coordinates
+			double x1 = fGridXInPixels + lInitialVerticeXCoordinate * fCellWidthInPixels;
+			double y1 = fGridYInPixels + lInitialVerticeYCoordinate * fCellHeightInPixels;
+			double x2 = fGridXInPixels + lFinalVerticeXCoordinate * fCellWidthInPixels;
+			double y2 = fGridYInPixels + lFinalVerticeYCoordinate * fCellHeightInPixels;
+
+			double midX = (x1 + x2) / 2.0;
+			double midY = (y1 + y2) / 2.0;
+			
+			int lX = (int) midX - 20;
+			int lY = (int) midY - 10;
+			
+			if (lInitialVerticeYCoordinate == lFinalVerticeYCoordinate) {
+				// Horizontal wall: adjust Y position to be above the wall
+				lY -= 10;
+			} else {
+				// Vertical wall: adjust X position to be left of the wall
+				lX -= 10;
+				if (lWall.getId() > 9) {
+					// Further left for two-digit IDs
+					lX -= 5;
+				}
+			}
+			
+			// For the uppermost horizontal north wall, place the ID below the wall
+			if (lInitialVerticeXCoordinate  == 0 && lInitialVerticeYCoordinate == 0 && lFinalVerticeXCoordinate == fGrid.getNumberOfColumns() && lFinalVerticeYCoordinate == 0) {
+				lY += 22;
+			}
+			
+
+			// Draw wall ID at midpoint
+			String wallIdAsString = Integer.toString(lWall.getId());
+			drawStringCentered(wallIdAsString, lX, lY, 40, 20, aGraphics);
 		}
 	}
 
@@ -485,6 +540,14 @@ public class TRLGridPanel extends JPanel implements Observer {
 
 	public void setDisplayCellIds(boolean fDrawCellIds) {
 		this.fDisplayCellIds = fDrawCellIds;
+	}
+	
+	public boolean isDisplayWallIds() {
+		return fDisplayWallIds;
+	}
+
+	public void setDisplayWallIds(boolean aDisplayWallIds) {
+		fDisplayWallIds = aDisplayWallIds;
 	}
 	
 	public boolean isDisplayVerticesCoordinates() {

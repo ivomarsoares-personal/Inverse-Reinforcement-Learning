@@ -7,6 +7,8 @@ import java.util.List;
  */
 public interface IRLWall extends IRLGridComponent{
 	
+	public int getId();	
+	public void setId(int aId);
 	public int getInitialVerticeXCoordinate();
 	public void setInitialVerticeXCoordinate(int fInitialVerticeXCoordinate);
 	public int getInitialVerticeYCoordinate();

@@ -87,9 +87,9 @@ public class TRLFileUtil {
 			List<IRLWall> lWalls = aGrid.getWallList();
 			if( lWalls != null ){
 				for( int i = 0; i < lWalls.size(); i++ ){
-					IRLWall lW = lWalls.get(i);
-					int lId = i; // use index as id (no public id getter available)
-					lPrintWriter.println(String.format("%d,%d,%d,%d,%d", lId, lW.getInitialVerticeXCoordinate(), lW.getInitialVerticeYCoordinate(), lW.getFinalVerticeXCoordinate(), lW.getFinalVerticeYCoordinate()));
+					IRLWall lWall = lWalls.get(i);
+					int lId = lWall.getId(); // use index as id (no public id getter available)
+					lPrintWriter.println(String.format("%d,%d,%d,%d,%d", lId, lWall.getInitialVerticeXCoordinate(), lWall.getInitialVerticeYCoordinate(), lWall.getFinalVerticeXCoordinate(), lWall.getFinalVerticeYCoordinate()));
 				}
 			}
 		}
@@ -242,7 +242,7 @@ public class TRLFileUtil {
 				int lRows = lTokens.size() > 1 ? Integer.parseInt(lTokens.get(1)) : 0;
 				int lCols = lTokens.size() > 2 ? Integer.parseInt(lTokens.get(2)) : lRows;
 				
-				IRLGrid lGrid = TRLGridUtil.getSharedInstance().createGrid(lRows, lCols);
+				IRLGrid lGrid = TRLGridUtil.getSharedInstance().createGrid(lRows, lCols, false);
 				lGrid.setName(lName);
 				
 				return lGrid;
@@ -275,7 +275,7 @@ public class TRLFileUtil {
 				int lFx = Integer.parseInt(lParts[3]);
 				int lFy = Integer.parseInt(lParts[4]);
 				
-				TRLWallUtil.getSharedInstance().createWall(aGrid, lIx, lIy, lFx, lFy);
+				TRLWallUtil.getSharedInstance().createWall(aGrid, lId, lIx, lIy, lFx, lFy);
 			}
 		}
 		catch(Exception e){

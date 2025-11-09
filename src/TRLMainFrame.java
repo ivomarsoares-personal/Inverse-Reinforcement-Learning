@@ -7,7 +7,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -151,6 +150,9 @@ public class TRLMainFrame extends JFrame {
 		
 		JMenu lDisplayMenu = new JMenu("Display");
 		JCheckBoxMenuItem lCellIdCheckBoxMenuItem = new JCheckBoxMenuItem("Cell Id");
+		JCheckBoxMenuItem lWallIdCheckBoxMenuItem = new JCheckBoxMenuItem("Wall Id");
+		
+		
 		JCheckBoxMenuItem lVerticesCoordinatesCheckBoxMenuItem = new JCheckBoxMenuItem("Vertices Coordinages");		
 		JMenu lPolicyMenu = new JMenu("Policy");
 		JCheckBoxMenuItem lPolicyArrowsCheckBoxMenuItem = new JCheckBoxMenuItem("Arrows");
@@ -161,10 +163,12 @@ public class TRLMainFrame extends JFrame {
 		
 		lCellIdCheckBoxMenuItem.setSelected(true);
 		lVerticesCoordinatesCheckBoxMenuItem.setSelected(false);
+		lWallIdCheckBoxMenuItem.setSelected(false);
 		lPolicyArrowsCheckBoxMenuItem.setSelected(true);
 		lPolicyStateValuesBoxMenuItem.setSelected(true);
 		lQValuesCheckBoxMenuItem.setSelected(true);
 		lDisplayMenu.add(lCellIdCheckBoxMenuItem);
+		lDisplayMenu.add(lWallIdCheckBoxMenuItem);
 		lDisplayMenu.add(lVerticesCoordinatesCheckBoxMenuItem);
 		lDisplayMenu.add(lPolicyMenu);
 		lDisplayMenu.add(lQValuesCheckBoxMenuItem);
@@ -197,6 +201,7 @@ public class TRLMainFrame extends JFrame {
 		add( fTabbedPane, BorderLayout.CENTER);
 
 		fGridPanel.setDisplayCellIds( lCellIdCheckBoxMenuItem.isSelected() );
+		fGridPanel.setDisplayWallIds(lWallIdCheckBoxMenuItem.isSelected());
 		fGridPanel.setDisplayPolicyActionArrows( lPolicyArrowsCheckBoxMenuItem.isSelected() );
 		fGridPanel.setDisplayPolicyStateValues( lPolicyStateValuesBoxMenuItem.isSelected() );
 		fGridPanel.setDisplayQValues(lQValuesCheckBoxMenuItem.isSelected());
@@ -254,7 +259,7 @@ public class TRLMainFrame extends JFrame {
 				}
 
 				// Create the grid first, then set its name and wire it to the UI.
-				fGrid = TRLGridUtil.getSharedInstance().createGrid(fNumberOfRows, fNumberOfColumns);				
+				fGrid = TRLGridUtil.getSharedInstance().createGrid(fNumberOfRows, fNumberOfColumns, true);				
 				fGrid.setName(lGridWorldNameTextField.getText());
 				setTitle("GridWorld - " + fGrid.getName() + " - Reinforcement Learning");
 				fGridPanel.setGrid(fGrid);
@@ -316,7 +321,7 @@ public class TRLMainFrame extends JFrame {
 				// refresh tabs and title
 				fTabbedPane.removeAll();
 				fTabbedPane.addTab("Grid", fGridPanel);
-				setTitle("GridWorld - " + fGrid.getName() + " - Inverse Reinforcement Learning");
+				setTitle("GridWorld - " + fGrid.getName() + " - Reinforcement Learning");
 				fGridPanel.repaint();
 			}
 		});
@@ -333,6 +338,14 @@ public class TRLMainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent aActionEvent) {				
 				fGridPanel.setDisplayCellIds( lCellIdCheckBoxMenuItem.isSelected() );
+				fGridPanel.repaint();
+			}			
+		});
+		
+		lWallIdCheckBoxMenuItem.addActionListener( new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent aActionEvent) {				
+				fGridPanel.setDisplayWallIds( lWallIdCheckBoxMenuItem.isSelected() );
 				fGridPanel.repaint();
 			}			
 		});
@@ -987,11 +1000,13 @@ public class TRLMainFrame extends JFrame {
 					return;
 				}
 				
+				System.out.println("Number of walls: " + fGrid.getWallList().size() + "\n\n");
+				
 				List<IRLWall> lWallsList = fGrid.getWallList();
 				for (int lWallIndex = 0; lWallIndex < lWallsList.size(); lWallIndex++ ) {
 					IRLWall lWall = lWallsList.get(lWallIndex);
 					System.out.println( String.format("Wall %d: Initial Vertice (%d,%d), Final Vertice (%d,%d)", 
-							lWallIndex,
+							lWall.getId(),
 							lWall.getInitialVerticeXCoordinate(),
 							lWall.getInitialVerticeYCoordinate(),
 							lWall.getFinalVerticeXCoordinate(),
