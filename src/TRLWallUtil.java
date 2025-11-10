@@ -203,6 +203,54 @@ public class TRLWallUtil {
 		return lNorthWallExists && lSouthWallExists && lWestWallExists && lEastWallExists;
 	}
 	
+	public boolean overlapingWallExists	(IRLGrid aGrid, final int aInitialVerticeXCoordinate, final int aInitialVerticeYCoordinate, final int aFinalVerticeXCoordinate, final int  aFinalVerticeYCoordinate) {
+		// Determine orientation of the wall to check
+		boolean lIsHorizontal = isHorizontalWall(aInitialVerticeYCoordinate, aFinalVerticeYCoordinate);
+		boolean lIsVertical = isVerticalWall(aInitialVerticeXCoordinate, aFinalVerticeXCoordinate);
+
+		int aMinX = Math.min(aInitialVerticeXCoordinate, aFinalVerticeXCoordinate);
+		int aMaxX = Math.max(aInitialVerticeXCoordinate, aFinalVerticeXCoordinate);
+		int aMinY = Math.min(aInitialVerticeYCoordinate, aFinalVerticeYCoordinate);
+		int aMaxY = Math.max(aInitialVerticeYCoordinate, aFinalVerticeYCoordinate);
+
+		for( IRLWall lWall : aGrid.getWallList() ){
+
+			int wMinX = Math.min(lWall.getInitialVerticeXCoordinate(), lWall.getFinalVerticeXCoordinate());
+			int wMaxX = Math.max(lWall.getInitialVerticeXCoordinate(), lWall.getFinalVerticeXCoordinate());
+			int wMinY = Math.min(lWall.getInitialVerticeYCoordinate(), lWall.getFinalVerticeYCoordinate());
+			int wMaxY = Math.max(lWall.getInitialVerticeYCoordinate(), lWall.getFinalVerticeYCoordinate());
+
+			// Check horizontal overlap
+			if( lIsHorizontal && isHorizontalWall(lWall.getInitialVerticeYCoordinate(), lWall.getFinalVerticeYCoordinate()) ){
+				// Must be on the same Y coordinate to be collinear
+				int aY = aInitialVerticeYCoordinate; // same as aFinalVerticeYCoordinate
+				int wY = lWall.getInitialVerticeYCoordinate();
+				if( aY == wY ){
+					// Use half-open intervals [minX, maxX) to represent the cells covered by the wall
+					int overlap = Math.min(aMaxX, wMaxX) - Math.max(aMinX, wMinX);
+					if( overlap > 0 ){
+						return true;
+					}
+				}
+			}
+
+			// Check vertical overlap
+			if( lIsVertical && isVerticalWall(lWall.getInitialVerticeXCoordinate(), lWall.getFinalVerticeXCoordinate()) ){
+				int aX = aInitialVerticeXCoordinate;
+				int wX = lWall.getInitialVerticeXCoordinate();
+				if( aX == wX ){
+					// Use half-open intervals [minY, maxY)
+					int overlap = Math.min(aMaxY, wMaxY) - Math.max(aMinY, wMinY);
+					if( overlap > 0 ){
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+	
 	/**
 	 * Returns the next available wall ID in the grid.
 	 * 

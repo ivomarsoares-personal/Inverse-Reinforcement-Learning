@@ -1183,6 +1183,12 @@ public class TRLMainFrame extends JFrame {
 			JOptionPane.showMessageDialog(TRLMainFrame.this, "The final vertice Y coordinate " + lFinalVerticeYCoordinate + " cannot be greater than the number of rows of the grid " + fNumberOfRows + "." , "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}			
+		
+		if ( TRLWallUtil.getSharedInstance().overlapingWallExists( fGrid, lInitialVerticeXCoordinate, lInitialVerticeYCoordinate, lFinalVerticeXCoordinate, lFinalVerticeYCoordinate) ) {
+			JOptionPane.showMessageDialog(TRLMainFrame.this, "Walls cannot overlap.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
 		return true;
 	}	
 }
